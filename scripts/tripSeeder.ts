@@ -13,6 +13,7 @@ interface ScheduleData {
 
 interface SeedTripTemplatesParams {
   tramLineNumber: number;
+  direction: string; // 
   startStopName: string;
   endStopName: string;
   heading: string;
@@ -21,6 +22,7 @@ interface SeedTripTemplatesParams {
   saturdaySchedule: ScheduleData[];
   sundaySchedule: ScheduleData[];
 }
+
 
 export async function seedTripTemplates({
   tramLineNumber,
@@ -36,7 +38,7 @@ export async function seedTripTemplates({
 
   try {
     // 1. Get all required references
-    const tramLine = await TramLine.findOne({ number: tramLineNumber });
+    const tramLine = await TramLine.findOne({ number: tramLineNumber,direction:heading });
     if (!tramLine) throw new Error(`Tram Line ${tramLineNumber} not found`);
 
     const getStopId = async (name: string): Promise<Types.ObjectId> => {
