@@ -74,7 +74,7 @@ async function seedLine1Reverse() {
       tramLineNumber: 1,
       startStopName: "Östra Sjukhuset",
       endStopName: "Opaltorget",
-      heading: "Opaltorget",
+      heading: "Tynnered",
       tripDurationMinutes: 45, // Adjust based on actual travel time
       weekdaySchedule,
       saturdaySchedule,

@@ -31,7 +31,7 @@ const line6Forward = [
   "Linnéplatsen",
   "Sahlgrenska Huvudentré",
   "Medicinaregatan",
-  "Wavrinskys Plats", //6835b76cf517a6d17c834f1e
+  "Wavrinskys Plats",
   "Chalmers",
   "Korsvägen",
   "Scandinavium",
@@ -48,7 +48,7 @@ const line6Forward = [
   "Beväringsgatan",
   "Nymånegatan",
   "Runstavsgatan",
-  "Kortedala Torg", //6835b76cf517a6d17c834f24
+  "Kortedala Torg",
   "Allhelgonakyrkan",
   "Aprilgatan",
 ];

@@ -116,39 +116,41 @@ const sundayScheduleRev = [
   { hour: 23, minutes: [4, 24, 47] },
 ];
 async function seedLine2() {
-  try {
-    await seedTripTemplates({
-      tramLineNumber: 2,
-      startStopName: "Axel Dahlströms Torg",
-      endStopName: "Mölndals Innerstad",
-      heading: "Mölndal",
-      tripDurationMinutes: 41, // Adjust based on actual travel time
-      weekdaySchedule,
-      saturdaySchedule,
-      sundaySchedule,
-    });
-    process.exit(0);
-  } catch (error) {
-    console.error("❌ Error seeding Line 2:", error);
-    process.exit(1);
-  }
+  await seedTripTemplates({
+    tramLineNumber: 2,
+    startStopName: "Axel Dahlströms Torg",
+    endStopName: "Mölndals Innerstad",
+    heading: "Mölndal",
+    tripDurationMinutes: 41,
+    weekdaySchedule,
+    saturdaySchedule,
+    sundaySchedule,
+  });
 }
+
 async function seedLine2Rev() {
+  await seedTripTemplates({
+    tramLineNumber: 2,
+    startStopName: "Mölndals Innerstad",
+    endStopName: "Axel Dahlströms Torg",
+    heading: "Högsbotorp",
+    tripDurationMinutes: 36,
+    weekdaySchedule: weekdayScheduleRev,
+    saturdaySchedule: saturdayScheduleRev,
+    sundaySchedule: sundayScheduleRev,
+  });
+}
+
+async function main() {
   try {
-    await seedTripTemplates({
-      tramLineNumber: 2,
-      startStopName: "Mölndals Innerstad",
-      endStopName: "Axel Dahlströms Torg",
-      heading: "Högsbotorp",
-      tripDurationMinutes: 36,
-      weekdaySchedule: weekdayScheduleRev,
-      saturdaySchedule: saturdayScheduleRev,
-      sundaySchedule: sundayScheduleRev,
-    });
+    await seedLine2();
+    await seedLine2Rev();
+    console.log("✅ Line 2 seeded in both directions.");
     process.exit(0);
-  } catch (error) {
-    console.error("❌ Error seeding Line 2 (Reverse):", error);
+  } catch (err) {
+    console.error("❌ Failed to seed Line 2:", err);
     process.exit(1);
   }
 }
-seedLine2Rev();
+
+main();

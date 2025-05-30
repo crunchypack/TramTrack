@@ -27,10 +27,10 @@ const line2Forward = [
   "Elisedal",
   "Varbergsgatan",
   "Lana",
-  "Krokslätts torg",
+  "Krokslätts Torg",
   "Krokslätts Fabriker",
   "Lackarebäck",
-  "Mölndals sjukhus",
+  "Mölndals Sjukhus",
   "Mölndals Innerstad",
 ];
 

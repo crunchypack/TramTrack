@@ -106,7 +106,7 @@ async function seedTramLines() {
   const lines = [
     {
       number: 11,
-      direction: "Komettorget",
+      direction: "Bergsjön",
       route: forwardStopIds,
       timeBetweenStops: timeBetweenForward,
     },

@@ -112,40 +112,38 @@ const sundayScheduleRev = [
   { hour: 22, minutes: [17, 37, 57] },
 ];
 async function seedLine() {
-  try {
-    await seedTripTemplates({
-      tramLineNumber: 7,
-      startStopName: "Opaltorget",
-      endStopName: "Komettorget",
-      heading: "Bergsjön",
-      tripDurationMinutes: 48, // Adjust based on actual travel time
-      weekdaySchedule,
-      saturdaySchedule,
-      sundaySchedule,
-    });
-    process.exit(0);
-  } catch (error) {
-    console.error("❌ Error seeding Line 7:", error);
-    process.exit(1);
-  }
+  await seedTripTemplates({
+    tramLineNumber: 7,
+    startStopName: "Opaltorget",
+    endStopName: "Komettorget",
+    heading: "Bergsjön",
+    tripDurationMinutes: 48, // Adjust based on actual travel time
+    weekdaySchedule,
+    saturdaySchedule,
+    sundaySchedule,
+  });
 }
 async function seedLineRev() {
+  await seedTripTemplates({
+    tramLineNumber: 7,
+    startStopName: "Komettorget",
+    endStopName: "Opaltorget",
+    heading: "Tynnered",
+    tripDurationMinutes: 55, // Adjust based on actual travel time
+    weekdaySchedule: weekdayScheduleRev,
+    saturdaySchedule: saturdayScheduleRev,
+    sundaySchedule: sundayScheduleRev,
+  });
+}
+async function main() {
   try {
-    await seedTripTemplates({
-      tramLineNumber: 7,
-      startStopName: "Komettorget",
-      endStopName: "Opaltorget",
-      heading: "Tynnered",
-      tripDurationMinutes: 55, // Adjust based on actual travel time
-      weekdaySchedule: weekdayScheduleRev,
-      saturdaySchedule: saturdayScheduleRev,
-      sundaySchedule: sundayScheduleRev,
-    });
+    await seedLine();
+    await seedLineRev();
+    console.log("Tram Line 7 trip templates seeded successfully.");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error seeding Line 7:", error);
+    console.error("Error seeding line 4:", error);
     process.exit(1);
   }
 }
-//seedLine();
-seedLineRev();
+main();

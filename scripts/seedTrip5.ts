@@ -114,41 +114,39 @@ const sundayScheduleRev = [
   { hour: 22, minutes: [11, 31, 51] },
 ];
 async function seedLine() {
-  try {
-    await seedTripTemplates({
-      tramLineNumber: 5,
-      startStopName: "Varmfrontsgatan",
-      endStopName: "Östra Sjukhuset",
-      heading: "Östra Sjukhuset",
-      tripDurationMinutes: 46, // Adjust based on actual travel time
-      weekdaySchedule,
-      saturdaySchedule,
-      sundaySchedule,
-    });
-    process.exit(0);
-  } catch (error) {
-    console.error("❌ Error seeding Line 5:", error);
-    process.exit(1);
-  }
+  await seedTripTemplates({
+    tramLineNumber: 5,
+    startStopName: "Varmfrontsgatan",
+    endStopName: "Östra Sjukhuset",
+    heading: "Östra Sjukhuset",
+    tripDurationMinutes: 46, // Adjust based on actual travel time
+    weekdaySchedule,
+    saturdaySchedule,
+    sundaySchedule,
+  });
 }
 async function seedLineRev() {
+  await seedTripTemplates({
+    tramLineNumber: 5,
+    startStopName: "Östra Sjukhuset",
+    endStopName: "Varmfrontsgatan",
+    heading: "Länsmansgården",
+    tripDurationMinutes: 45,
+    weekdaySchedule: weekdayScheduleRev,
+    saturdaySchedule: saturdayScheduleRev,
+    sundaySchedule: sundayScheduleRev,
+  });
+}
+
+async function main() {
   try {
-    await seedTripTemplates({
-      tramLineNumber: 2,
-      startStopName: "Östra Sjukhuset",
-      endStopName: "Varmfrontsgatan",
-      heading: "Länsmansgården",
-      tripDurationMinutes: 45,
-      weekdaySchedule: weekdayScheduleRev,
-      saturdaySchedule: saturdayScheduleRev,
-      sundaySchedule: sundayScheduleRev,
-    });
+    await seedLine();
+    await seedLineRev();
+    console.log("Tram Line 5 trip templates seeded successfully.");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error seeding Line 5 (Reverse):", error);
+    console.error("Error seeding line 4:", error);
     process.exit(1);
   }
 }
-seedLineRev();
-// Uncomment the following line to seed the original direction
-// seedLine();
+main();

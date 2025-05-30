@@ -73,8 +73,12 @@ async function seedTramLines() {
     },
   ];
 
-  await TramLine.deleteMany({ number: 1 }); // optional cleanup
-  await TramLine.insertMany(lines);
+  //await TramLine.deleteMany({ number: 1 }); // optional cleanup
+  const result = await TramLine.insertMany(lines);
+  console.log(
+    "Inserted:",
+    result.map((l) => `${l.number} to ${l.direction}`)
+  );
 
   console.log("✅ Seeded Tram Line 1 (both directions)");
   process.exit(0);
