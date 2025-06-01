@@ -20,6 +20,7 @@ interface SeedTripTemplatesParams {
   weekdaySchedule: ScheduleData[];
   saturdaySchedule: ScheduleData[];
   sundaySchedule: ScheduleData[];
+  season?: "standard" | "summer";
 }
 
 export async function seedTripTemplates({
@@ -31,6 +32,7 @@ export async function seedTripTemplates({
   weekdaySchedule,
   saturdaySchedule,
   sundaySchedule,
+  season = "standard",
 }: SeedTripTemplatesParams) {
   await connectToDB();
 
@@ -84,6 +86,7 @@ export async function seedTripTemplates({
               endStop: endStopId,
               dayType,
               isWeekend: dayType !== "weekday",
+              season,
             },
           },
         }))

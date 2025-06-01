@@ -122,3 +122,42 @@ const sundayScheduleRev = [
   { hour: 20, minutes: [5, 19, 34, 49] },
   { hour: 21, minutes: [4, 19, 36, 56] },
 ];
+
+async function seedLine() {
+  await seedTripTemplates({
+    tramLineNumber: 8,
+    startStopName: "Angered Centrum",
+    endStopName: "Frölunda Torg",
+    heading: "Frölunda",
+    tripDurationMinutes: 48, // Adjust based on actual travel time
+    weekdaySchedule,
+    saturdaySchedule,
+    sundaySchedule,
+    season: "standard",
+  });
+}
+async function seedLineRev() {
+  await seedTripTemplates({
+    tramLineNumber: 8,
+    startStopName: "Frölunda Torg",
+    endStopName: "Angered Centrum",
+    heading: "Angered",
+    tripDurationMinutes: 44, // Adjust based on actual travel time
+    weekdaySchedule: weekdayScheduleRev,
+    saturdaySchedule: saturdayScheduleRev,
+    sundaySchedule: sundayScheduleRev,
+    season: "standard",
+  });
+}
+async function main() {
+  try {
+    await seedLine();
+    await seedLineRev();
+    console.log("Tram Line 8 trip templates seeded successfully.");
+    process.exit(0);
+  } catch (error) {
+    console.error("Error seeding line 8:", error);
+    process.exit(1);
+  }
+}
+main();

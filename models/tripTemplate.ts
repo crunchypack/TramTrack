@@ -9,6 +9,7 @@ interface ITripTemplate extends Document {
   endStop: mongoose.Types.ObjectId;
   dayType: "weekday" | "saturday" | "sunday";
   isWeekend: boolean;
+  season: "standard" | "summer";
 }
 
 const tripTemplateSchema = new Schema<ITripTemplate>({
@@ -20,6 +21,7 @@ const tripTemplateSchema = new Schema<ITripTemplate>({
   endStop: { type: Schema.Types.ObjectId, ref: "TramStop", required: true },
   dayType: { type: String, required: true },
   isWeekend: { type: Boolean, required: true },
+  season: { type: String, enum: ["standard", "summer"], default: "standard" },
 });
 
 export default mongoose.models.TripTemplate ||
