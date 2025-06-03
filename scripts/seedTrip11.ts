@@ -21,7 +21,7 @@ const weekdaySchedule = [
   { hour: 20, minutes: [4, 19, 34, 49] },
   { hour: 21, minutes: [4, 19, 34, 49] },
   { hour: 22, minutes: [4, 6, 19, 26, 34, 46, 49] },
-  { hour: 23, minutes: [4, 6, 19, 26, 34, 46, 49] }
+  { hour: 23, minutes: [4, 6, 19, 26, 34, 46, 49] },
 ];
 
 // Saturday Schedule
@@ -45,7 +45,7 @@ const saturdaySchedule = [
   { hour: 20, minutes: [4, 19, 34, 49] },
   { hour: 21, minutes: [4, 19, 34, 49] },
   { hour: 22, minutes: [4, 19, 34, 49] },
-  { hour: 23, minutes: [4, 19, 34, 49] }
+  { hour: 23, minutes: [4, 19, 34, 49] },
 ];
 
 // Sunday Schedule
@@ -69,7 +69,7 @@ const sundaySchedule = [
   { hour: 20, minutes: [4, 19, 34, 49] },
   { hour: 21, minutes: [4, 19, 34, 49] },
   { hour: 22, minutes: [6, 26, 46] },
-  { hour: 23, minutes: [6, 26, 46] }
+  { hour: 23, minutes: [6, 26, 46] },
 ];
 
 // Saltholmen - Bersjön
@@ -92,7 +92,7 @@ const weekdayScheduleRev = [
   { hour: 20, minutes: [13, 28, 43, 58] },
   { hour: 21, minutes: [13, 29, 43, 46, 58] },
   { hour: 22, minutes: [6, 13, 26, 28, 43, 46, 58] },
-  { hour: 23, minutes: [6, 13, 26, 28, 43, 51, 58] }
+  { hour: 23, minutes: [6, 13, 26, 28, 43, 51, 58] },
 ];
 
 // Saturday Schedule
@@ -114,7 +114,7 @@ const saturdayScheduleRev = [
   { hour: 20, minutes: [12, 27, 42, 57] },
   { hour: 21, minutes: [12, 27, 43, 58] },
   { hour: 22, minutes: [13, 28, 43, 58] },
-  { hour: 23, minutes: [13, 28, 43, 58] }
+  { hour: 23, minutes: [13, 28, 43, 58] },
 ];
 
 // Sunday Schedule
@@ -136,7 +136,7 @@ const sundayScheduleRev = [
   { hour: 20, minutes: [13, 28, 43, 58] },
   { hour: 21, minutes: [13, 29, 46] },
   { hour: 22, minutes: [6, 26, 46] },
-  { hour: 23, minutes: [6, 26, 51] }
+  { hour: 23, minutes: [6, 26, 51] },
 ];
 
 // Seed the trip templates with the schedules
@@ -155,8 +155,8 @@ async function seedLine() {
 }
 async function seedLineRev() {
   await seedTripTemplates({
-    tramLineNumber: 10,
-    startStopName: "Saltholmemn",
+    tramLineNumber: 11,
+    startStopName: "Saltholmen",
     endStopName: "Komettorget",
     heading: "Bergsjön",
     tripDurationMinutes: 52, // Adjust based on actual travel time
