@@ -5,12 +5,13 @@ const CreateTripPage = () => {
   return (
     <div>
       <Head>
-        <title>Create block</title>
+        <title>Create Schedule</title>
       </Head>
       <DriverScheduleForm
-        circulationEndpoint="/api/circulation"
         driverEndpoint="/api/driver"
-        endpoint="/api/driverschedule/new"
+        circulationEndpoint="/api/circulationTemplate"
+        tramStopEndpoint="/api/tramstop"
+        endpoint="/api/driverSchedule"
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import driverschedule from "@/models/driverschedule";
+import Driverschedule from "@/models/driverSchedule";
 import { connectToDB } from "@/utils/database";
 import { NextResponse } from "next/server";
 
@@ -10,17 +10,17 @@ export async function GET(
   await connectToDB();
 
   try {
-    const driverSchedule = await driverschedule
-      .findOne({ driver: id })
-      .populate({
-        path: "circulationTemplate",
+    const driverSchedule = await Driverschedule.findOne({
+      driver: id,
+    }).populate({
+      path: "circulationTemplate",
+      populate: {
+        path: "trips",
         populate: {
-          path: "trips",
-          populate: {
-            path: "tramline",
-          },
+          path: "tramline",
         },
-      }); // Populate with circulations data
+      },
+    }); // Populate with circulations data
     return NextResponse.json(driverSchedule, { status: 200 });
   } catch (error) {
     console.error("Error fetching driver schedule:", error);

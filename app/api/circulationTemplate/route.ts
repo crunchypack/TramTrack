@@ -1,5 +1,6 @@
 import { connectToDB } from "@/utils/database";
 import CirculationTemplate from "@/models/circulationTemplate";
+import "@/models";
 
 export async function GET() {
   try {

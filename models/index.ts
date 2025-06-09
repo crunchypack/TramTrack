@@ -1,17 +1,16 @@
-import circulation from "./circulationTemplate";
-import driver from "./driver";
-import driverschedule from "./driverschedule";
-import tramline from "./tramline";
-import trip from "./tripTemplate";
-import tramstop from "./tramStop";
+// models/index.ts
+import Driver from "./driver";
+import DriverSchedule from "./driverSchedule";
+import CirculationTemplate from "./circulationTemplate";
+import TramStop from "./tramStop";
+import TripTemplate from "./tripTemplate";
+import TramLine from "./tramline";
 
-const models = {
-  trip,
-  circulation,
-  driverschedule,
-  tramline,
-  driver,
-  tramstop,
+export {
+  Driver,
+  DriverSchedule,
+  CirculationTemplate,
+  TramStop,
+  TripTemplate,
+  TramLine,
 };
-
-export default models;

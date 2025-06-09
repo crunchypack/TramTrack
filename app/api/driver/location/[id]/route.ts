@@ -1,19 +1,12 @@
-// Update your API route
 import { connectToDB } from "@/utils/database";
 import { NextResponse } from "next/server";
-
-// import Trip from "@/models/trip";
-// import Circulation from "@/models/circulation";
-// import DriverSchedule from "@/models/driverschedule";
-// import Driver from "@/models/driver";
-import models from "@/models";
+import { Driver, DriverSchedule } from "@/models";
 
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   const employeeId = params.id;
-
   if (!employeeId) {
     return NextResponse.json(
       { message: "Employee ID is required" },
@@ -22,41 +15,38 @@ export async function GET(
   }
 
   try {
-    await connectToDB(); // Connect to the database
+    await connectToDB();
 
-    // Find the driver based on employeeId
-    const mainDriver = await models.driver.findOne({ employeeId }).exec();
-    if (!mainDriver) {
+    const driver = await Driver.findOne({ employeeId }).exec();
+    if (!driver) {
       return NextResponse.json(
         { message: "Driver not found" },
         { status: 404 }
       );
     }
 
-    // Find the driver's schedule using the driver's ObjectId
-    const driverSchedule = await models.driverschedule
-      .findOne({ driver: mainDriver._id })
+    const schedule = await DriverSchedule.findOne({ driver: driver._id })
       .populate({
-        path: "circulationTemplate",
-        // model: "Circulation",
+        path: "circulations.circulationTemplate",
         populate: {
           path: "trips",
-          // model: "Trip",
           populate: {
             path: "tramline",
-            // model: "Tramline",
           },
         },
       })
+      .populate("circulations.startStop")
+      .populate("circulations.endStop")
       .exec();
 
-    if (!driverSchedule) {
+    if (!schedule) {
       return NextResponse.json(
         { message: "Driver schedule not found" },
         { status: 404 }
       );
     }
-    return NextResponse.json(driverSchedule);
+
+    return NextResponse.json(schedule);
   } catch (error) {
     console.error("Internal server error:", error);
     return NextResponse.json(

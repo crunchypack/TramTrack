@@ -1,219 +1,201 @@
 "use client";
-import { useState, useEffect } from "react";
 
-// Interface for the Trip object
+import { useEffect, useState } from "react";
+
 interface Trip {
   _id: string;
-  tramlineName: string;
-  tramline: string;
+  tramline: {
+    number: number;
+    direction: string;
+  };
   startTime: string;
   endTime: string;
+  heading: string;
 }
 
-interface CirculationFormProps {
-  endpoint: string; // Endpoint to submit the new Circulation
-  tripEndpoint: string; // Endpoint to fetch available trips
-}
+const CirculationBuilderForm = () => {
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [filteredTrips, setFilteredTrips] = useState<Trip[]>([]);
+  const [selectedTrips, setSelectedTrips] = useState<Trip[]>([]);
 
-const CirculationForm: React.FC<CirculationFormProps> = ({
-  endpoint,
-  tripEndpoint,
-}) => {
-  const [circulationData, setCirculationData] = useState({
-    startTime: "",
-    endTime: "",
-    endStop: "",
+  const [filters, setFilters] = useState({
+    tramline: "",
+    heading: "",
+    dayType: "weekday",
+    season: "standard",
   });
-  const [selectedTripId, setSelectedTripId] = useState(""); // State to hold selected trip ID
-  const [trips, setTrips] = useState<Trip[]>([]); // Store available trips fetched from the endpoint
-  const [addedTrips, setAddedTrips] = useState<Trip[]>([]); // Trips added to the circulation
+
+  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Fetch available trips when the component mounts
-  useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const response = await fetch(tripEndpoint);
-        if (response.ok) {
-          const data = await response.json();
-          setTrips(data);
-        } else {
-          setMessage("Failed to load trips");
-        }
-      } catch (error) {
-        setMessage("Error fetching trips");
-      }
-    };
+  const applyFilters = async () => {
+    const { tramline, heading, dayType, season } = filters;
+    const params = new URLSearchParams();
 
-    fetchTrips();
-  }, [tripEndpoint]);
+    if (tramline) params.append("tramline", tramline);
+    if (heading) params.append("heading", heading);
+    params.append("dayType", dayType);
+    params.append("season", season);
 
-  // Update circulation form data
-  const handleCirculationChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setCirculationData({ ...circulationData, [name]: value });
-  };
-
-  // Handle adding a selected trip to the list
-  const handleAddTrip = () => {
-    const selectedTrip = trips.find((trip) => trip._id === selectedTripId);
-    if (selectedTrip) {
-      setAddedTrips([...addedTrips, selectedTrip]);
-      setSelectedTripId(""); // Reset selected trip
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/tripTemplate?${params.toString()}`);
+      const data = await res.json();
+      const sorted = data.sort((a: Trip, b: Trip) =>
+        a.startTime.localeCompare(b.startTime)
+      );
+      setFilteredTrips(sorted);
+      setMessage("");
+    } catch (error) {
+      setMessage("Error fetching trips");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Handle removing a trip from the list
-  const handleRemoveTrip = (tripId: string) => {
-    setAddedTrips(addedTrips.filter((trip) => trip._id !== tripId));
+  const addTrip = (trip: Trip) => {
+    if (!selectedTrips.find((t) => t._id === trip._id)) {
+      const updated = [...selectedTrips, trip];
+      updated.sort((a, b) => a.startTime.localeCompare(b.startTime));
+      setSelectedTrips(updated);
+    }
   };
 
-  // Submit the circulation with selected trips
+  const removeTrip = (id: string) => {
+    const updated = selectedTrips.filter((t) => t._id !== id);
+    updated.sort((a, b) => a.startTime.localeCompare(b.startTime));
+    setSelectedTrips(updated);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedTrips.length === 0) return;
 
-    const circulationPayload = {
-      ...circulationData,
-      trips: addedTrips.map((trip) => trip._id), // Include only the trip IDs
+    const payload = {
+      trips: selectedTrips.map((t) => t._id),
+      dayType: filters.dayType,
+      season: filters.season,
     };
 
-    const response = await fetch(endpoint, {
+    const res = await fetch("/api/circulationTemplate/new", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(circulationPayload),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      setMessage("Circulation created successfully!");
-      setCirculationData({ startTime: "", endTime: "", endStop: "" });
-      setAddedTrips([]);
+    if (res.ok) {
+      setMessage("✅ Circulation created.");
+      setSelectedTrips([]);
     } else {
-      setMessage(data.message || "Failed to create circulation.");
+      const err = await res.json();
+      setMessage(err.message || "❌ Failed to create circulation.");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-2xl mx-auto mt-10 p-5 border rounded shadow-md"
-    >
-      <h1 className="text-2xl font-bold mb-5">Create Circulation</h1>
+    <form onSubmit={handleSubmit} className="p-4 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Create Circulation</h1>
 
-      {/* Circulation Fields */}
-      <div className="mb-4">
-        <label className="block text-gray-700">Start Time</label>
+      <div className="grid grid-cols-2 gap-4 mb-6">
         <input
-          type="datetime-local"
-          name="startTime"
-          value={circulationData.startTime}
-          onChange={handleCirculationChange}
-          className="w-full p-2 border rounded"
-          required
+          className="p-2 border rounded"
+          placeholder="Tramline Number"
+          value={filters.tramline}
+          onChange={(e) => setFilters({ ...filters, tramline: e.target.value })}
         />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-gray-700">End Time</label>
         <input
-          type="datetime-local"
-          name="endTime"
-          value={circulationData.endTime}
-          onChange={handleCirculationChange}
-          className="w-full p-2 border rounded"
-          required
+          className="p-2 border rounded"
+          placeholder="Heading"
+          value={filters.heading}
+          onChange={(e) => setFilters({ ...filters, heading: e.target.value })}
         />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-gray-700">End Stop</label>
-        <input
-          type="text"
-          name="endStop"
-          value={circulationData.endStop}
-          onChange={handleCirculationChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
-
-      {/* Trip Selection Dropdown */}
-      <div className="mb-4">
-        <label className="block text-gray-700">Select Trip</label>
         <select
-          name="selectedTrip"
-          value={selectedTripId}
-          onChange={(e) => setSelectedTripId(e.target.value)}
-          className="w-full p-2 border rounded"
-          required
+          className="p-2 border rounded"
+          value={filters.dayType}
+          onChange={(e) => setFilters({ ...filters, dayType: e.target.value })}
         >
-          <option value="" disabled>
-            Select an existing trip
-          </option>
-          {trips.map((trip) => (
-            <option key={trip._id} value={trip._id}>
-              {`Tramline: ${trip.tramlineName}, Start Time: ${new Date(
-                trip.startTime
-              ).toLocaleString()}, End Time: ${new Date(
-                trip.endTime
-              ).toLocaleString()}`}
-            </option>
-          ))}
+          <option value="weekday">Weekday</option>
+          <option value="saturday">Saturday</option>
+          <option value="sunday">Sunday</option>
         </select>
-
-        {/* Add Trip Button */}
-        <button
-          type="button"
-          onClick={handleAddTrip}
-          className="mt-3 bg-blue-500 text-white p-2 rounded"
+        <select
+          className="p-2 border rounded"
+          value={filters.season}
+          onChange={(e) => setFilters({ ...filters, season: e.target.value })}
         >
-          Add Trip
-        </button>
+          <option value="standard">Standard</option>
+          <option value="summer">Summer</option>
+        </select>
       </div>
 
-      {/* Display Selected Trips */}
-      {addedTrips.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-lg font-bold mb-2">Trips in Circulation</h3>
-          <ul className="list-disc pl-5">
-            {addedTrips.map((trip) => (
-              <li key={trip._id} className="mb-2">
-                <span className="text-gray-700">
-                  {`Tramline: ${trip.tramlineName}, Start Time: ${new Date(
-                    trip.startTime
-                  ).toLocaleString()}, End Time: ${new Date(
-                    trip.endTime
-                  ).toLocaleString()}`}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTrip(trip._id)}
-                  className="ml-4 text-red-500"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Submit Button */}
       <button
-        type="submit"
-        className="w-full bg-green-500 text-white p-2 rounded"
+        type="button"
+        onClick={applyFilters}
+        className="mb-4 bg-blue-500 text-white py-2 px-4 rounded"
       >
-        Create Circulation
+        Filter Trips
       </button>
 
-      {message && <p className="mt-4 text-center text-red-500">{message}</p>}
+      {isLoading && <p className="text-gray-500 mb-2">Loading trips...</p>}
+
+      <div className="mb-4">
+        <h2 className="font-semibold mb-2">Available Trips</h2>
+        <ul className="max-h-64 overflow-y-auto border rounded p-2">
+          {filteredTrips.map((trip) => (
+            <li
+              key={trip._id}
+              className="flex justify-between items-center mb-1"
+            >
+              <span>
+                Line {trip.tramline.number} ({trip.heading}): {trip.startTime} →{" "}
+                {trip.endTime}
+              </span>
+              <button
+                type="button"
+                className="text-sm bg-green-500 text-white px-2 py-1 rounded"
+                onClick={() => addTrip(trip)}
+              >
+                Add
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-4">
+        <h2 className="font-semibold mb-2">Selected Trips</h2>
+        <ul className="border rounded p-2">
+          {selectedTrips.map((trip) => (
+            <li
+              key={trip._id}
+              className="flex justify-between items-center mb-1"
+            >
+              <span>
+                Line {trip.tramline.number} ({trip.heading}): {trip.startTime} →{" "}
+                {trip.endTime}
+              </span>
+              <button
+                type="button"
+                className="text-sm text-red-500"
+                onClick={() => removeTrip(trip._id)}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <button
+        type="submit"
+        className="bg-green-600 text-white py-2 px-6 rounded"
+      >
+        Save Circulation
+      </button>
+
+      {message && <p className="mt-4 text-center text-blue-700">{message}</p>}
     </form>
   );
 };
 
-export default CirculationForm;
+export default CirculationBuilderForm;

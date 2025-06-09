@@ -7,10 +7,7 @@ const CreateTripPage = () => {
       <Head>
         <title>Create circulation</title>
       </Head>
-      <CirculationForm
-        tripEndpoint="/api/trip"
-        endpoint="/api/circulation/new"
-      />
+      <CirculationForm />
     </div>
   );
 };

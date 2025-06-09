@@ -8,22 +8,11 @@ export async function POST(req: Request) {
   try {
     const {
       trips,
-      startStop,
-      endStop,
-      startTime,
-      endTime,
       dayType,
       season = "standard", // default if not provided
     } = await req.json();
 
-    if (
-      !trips ||
-      !startStop ||
-      !endStop ||
-      !startTime ||
-      !endTime ||
-      !dayType
-    ) {
+    if (!trips || !dayType) {
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
@@ -32,10 +21,7 @@ export async function POST(req: Request) {
 
     const newCirculation = new CirculationTemplate({
       trips,
-      startStop,
-      endStop,
-      startTime,
-      endTime,
+
       dayType,
       season,
     });
