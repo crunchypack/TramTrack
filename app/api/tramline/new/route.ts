@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDB } from "../../../../utils/database";
-import TramLine from "../../../../models/tramline";
+import { TramLine } from "@/models";
 
 export async function POST(req: Request) {
   await connectToDB();

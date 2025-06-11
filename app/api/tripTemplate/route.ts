@@ -1,8 +1,5 @@
 import { connectToDB } from "@/utils/database";
-import TripTemplate from "@/models/tripTemplate";
-import TramLine from "@/models/tramline"; // Make sure TramLine is registered
-import "@/models/tramStop";
-
+import { TripTemplate, TramLine } from "@/models";
 export async function GET(req: Request) {
   try {
     await connectToDB();

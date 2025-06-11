@@ -1,5 +1,5 @@
 import { connectToDB } from "@/utils/database";
-import TramStop from "@/models/tramStop";
+import { TramStop } from "@/models";
 
 export async function GET() {
   try {

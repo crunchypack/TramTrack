@@ -1,7 +1,6 @@
 // /api/driverSchedule/route.ts
 import { connectToDB } from "@/utils/database";
-import Driver from "@/models/driver";
-import DriverSchedule from "@/models/driverSchedule";
+import { Driver, DriverSchedule } from "@/models";
 
 export async function POST(req: Request) {
   try {

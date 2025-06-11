@@ -1,4 +1,4 @@
-import Driverschedule from "@/models/driverSchedule";
+import { DriverSchedule } from "@/models";
 import { connectToDB } from "@/utils/database";
 import { NextResponse } from "next/server";
 
@@ -10,7 +10,7 @@ export async function GET(
   await connectToDB();
 
   try {
-    const driverSchedule = await Driverschedule.findOne({
+    const driverSchedule = await DriverSchedule.findOne({
       driver: id,
     }).populate({
       path: "circulationTemplate",

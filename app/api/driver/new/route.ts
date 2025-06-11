@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDB } from "../../../../utils/database";
-import Driver from "../../../../models/driver";
+import { Driver } from "@/models";
 
 export async function POST(req: Request, res: Response) {
   await connectToDB();

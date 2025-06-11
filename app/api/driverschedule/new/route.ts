@@ -1,5 +1,5 @@
 import { connectToDB } from "@/utils/database";
-import DriverSchedule from "@/models/driverSchedule";
+import { DriverSchedule } from "@/models";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {

@@ -1,10 +1,10 @@
 import { connectToDB } from "../../../utils/database";
-import Tramline from "../../../models/tramline";
+import { TramLine } from "@/models";
 
 export async function GET(req: Request) {
   try {
     await connectToDB();
-    const tramlines = await Tramline.find({});
+    const tramlines = await TramLine.find({});
     return new Response(JSON.stringify(tramlines), { status: 200 });
   } catch (error) {
     console.log(error);
