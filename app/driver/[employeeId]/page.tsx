@@ -90,7 +90,7 @@ const DriverSchedulePage = ({ params }: { params: { employeeId: number } }) => {
                   Date:{new Date(lastStopInfo.date).toLocaleDateString("sv-SE")}{" "}
                   {new Date(lastStopInfo.date).toLocaleTimeString("sv-SE")}
                 </p>
-                <p>Tramline Number: {lastStopInfo.tramline}</p>
+                <p>TramLine Number: {lastStopInfo.tramline}</p>
               </div>
             )
           )}
@@ -162,7 +162,7 @@ export default DriverSchedulePage;
 //             <p>{tripInfo.message}</p> // Show message if it exists
 //           ) : (
 //             <>
-//               <p>Tramline: {tripInfo?.tramline}</p>
+//               <p>TramLine: {tripInfo?.tramline}</p>
 //               {tripInfo?.startTime && (
 //                 <p>
 //                   Start Time:{" "}

@@ -4,7 +4,7 @@ import TripForm from "../../components/TripForm";
 const tripFields = [
   {
     name: "tramline",
-    label: "Tramline",
+    label: "TramLine",
     type: "select",
   },
   { name: "startTime", label: "Start Time", type: "datetime-local" },

@@ -23,7 +23,7 @@ export async function GET(req: Request) {
       });
       if (!tramlineDoc) {
         return new Response(
-          JSON.stringify({ message: "Tramline not found for direction" }),
+          JSON.stringify({ message: "TramLine not found for direction" }),
           { status: 404 }
         );
       }
@@ -77,7 +77,7 @@ export async function GET(req: Request) {
 //         filter.tramline = tramlineDoc._id;
 //       } else {
 //         return new Response(
-//           JSON.stringify({ message: `Tramline ${tramline} not found.` }),
+//           JSON.stringify({ message: `TramLine ${tramline} not found.` }),
 //           { status: 404 }
 //         );
 //       }

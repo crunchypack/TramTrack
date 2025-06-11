@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { connectToDB } from "../utils/database";
 import TramStop from "../models/TramStop";
-import TramLine from "../models/Tramline";
+import TramLine from "../models/TramLine";
 
 const line7Forward = [
   "Opaltorget",

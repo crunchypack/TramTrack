@@ -99,7 +99,7 @@ const CirculationBuilderForm = () => {
       <div className="grid grid-cols-2 gap-4 mb-6">
         <input
           className="p-2 border rounded"
-          placeholder="Tramline Number"
+          placeholder="TramLine Number"
           value={filters.tramline}
           onChange={(e) => setFilters({ ...filters, tramline: e.target.value })}
         />

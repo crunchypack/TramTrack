@@ -1,6 +1,6 @@
 // tripTemplateSeeder.ts
 import { connectToDB } from "../utils/database";
-import TramLine from "../models/Tramline";
+import TramLine from "../models/TramLine";
 import TramStop from "../models/TramStop";
 import TripTemplate from "../models/TripTemplate";
 import { Types } from "mongoose";

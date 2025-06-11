@@ -13,7 +13,7 @@ interface TripFormProps {
   endpoint: string;
 }
 
-interface Tramline {
+interface TramLine {
   value: string;
   label: string;
   route: string[];
@@ -22,12 +22,12 @@ interface Tramline {
 const TripForm: React.FC<TripFormProps> = ({ fields, endpoint }) => {
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [message, setMessage] = useState("");
-  const [tramlines, setTramlines] = useState<Tramline[]>([]);
+  const [tramlines, setTramLines] = useState<TramLine[]>([]);
   const [routeOptions, setRouteOptions] = useState<string[]>([]); // State for route options based on selected tramline
 
   // Fetch tramline data when the component mounts
   useEffect(() => {
-    const fetchTramlines = async () => {
+    const fetchTramLines = async () => {
       try {
         const response = await fetch("/api/tramline"); // Adjust the endpoint as needed
         if (response.ok) {
@@ -42,7 +42,7 @@ const TripForm: React.FC<TripFormProps> = ({ fields, endpoint }) => {
               ], // Only keep the first and last stops
             })
           );
-          setTramlines(tramlineOptions);
+          setTramLines(tramlineOptions);
         } else {
           setMessage("Failed to load tramlines");
         }
@@ -51,7 +51,7 @@ const TripForm: React.FC<TripFormProps> = ({ fields, endpoint }) => {
       }
     };
 
-    fetchTramlines();
+    fetchTramLines();
   }, []);
 
   const handleChange = (
@@ -61,15 +61,15 @@ const TripForm: React.FC<TripFormProps> = ({ fields, endpoint }) => {
 
     // When tramline is selected, update the route options with first and last stops
     if (name === "tramline") {
-      const selectedTramline = tramlines.find(
+      const selectedTramLine = tramlines.find(
         (tramline) => tramline.value === value
       );
-      if (selectedTramline) {
-        setRouteOptions(selectedTramline.route);
+      if (selectedTramLine) {
+        setRouteOptions(selectedTramLine.route);
         setFormData({
           ...formData,
           tramline: value,
-          tramlineName: selectedTramline.label, // Set the tramlineName based on the selected tramline
+          tramlineName: selectedTramLine.label, // Set the tramlineName based on the selected tramline
         });
       }
     } else {
@@ -111,7 +111,7 @@ const TripForm: React.FC<TripFormProps> = ({ fields, endpoint }) => {
           <label className="block text-gray-700">{field.label}</label>
           {field.name === "tramline" && tramlines.length > 0 ? (
             <>
-              {/* Tramline Select Dropdown */}
+              {/* TramLine Select Dropdown */}
               <select
                 name="tramline"
                 value={formData.tramline || ""}
@@ -120,7 +120,7 @@ const TripForm: React.FC<TripFormProps> = ({ fields, endpoint }) => {
                 required
               >
                 <option value="" disabled>
-                  Select a Tramline
+                  Select a TramLine
                 </option>
                 {tramlines.map((option) => (
                   <option key={option.value} value={option.value}>
