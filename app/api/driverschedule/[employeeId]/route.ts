@@ -1,8 +1,8 @@
 // /api/driverSchedule/[employeeId]/route.ts
 import { connectToDB } from "@/utils/database";
 
-import driverSchedule from "@/models/driverSchedule";
-import CirculationTemplate from "@/models/circulationTemplate";
+import driverSchedule from "@/models/DriverSchedule";
+import CirculationTemplate from "@/models/CirculationTemplate";
 
 import { Driver } from "@/models";
 

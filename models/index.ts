@@ -1,10 +1,10 @@
 // models/index.ts
-import Driver from "./driver";
-import DriverSchedule from "./driverSchedule";
-import CirculationTemplate from "./circulationTemplate";
-import TramStop from "./tramStop";
-import TripTemplate from "./tripTemplate";
-import TramLine from "./tramline";
+import Driver from "./Driver";
+import DriverSchedule from "./DriverSchedule";
+import CirculationTemplate from "./CirculationTemplate";
+import TramStop from "./TramStop";
+import TripTemplate from "./TripTemplate";
+import TramLine from "./Tramline";
 
 export {
   Driver,

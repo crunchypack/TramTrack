@@ -1,5 +1,5 @@
 import { connectToDB } from "@/utils/database";
-import TripTemplate from "@/models/tripTemplate";
+import TripTemplate from "@/models/TripTemplate";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {

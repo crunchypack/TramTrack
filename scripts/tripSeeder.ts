@@ -1,8 +1,8 @@
 // tripTemplateSeeder.ts
 import { connectToDB } from "../utils/database";
-import TramLine from "../models/tramline";
-import TramStop from "../models/tramStop";
-import TripTemplate from "../models/tripTemplate";
+import TramLine from "../models/Tramline";
+import TramStop from "../models/TramStop";
+import TripTemplate from "../models/TripTemplate";
 import { Types } from "mongoose";
 import "dotenv/config";
 

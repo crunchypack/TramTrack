@@ -1,8 +1,8 @@
 // seedLine9.ts
 import "dotenv/config";
 import { connectToDB } from "../utils/database";
-import TramStop from "../models/tramStop";
-import TramLine from "../models/tramline";
+import TramStop from "../models/TramStop";
+import TramLine from "../models/Tramline";
 
 const line9Forward = [
   "Kungssten",
