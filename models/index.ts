@@ -4,7 +4,7 @@ import DriverSchedule from "./DriverSchedule";
 import CirculationTemplate from "./CirculationTemplate";
 import TramStop from "./TramStop";
 import TripTemplate from "./TripTemplate";
-import TramLine from "./Tramline";
+import TramLine from "./TramLine";
 
 export {
   Driver,
