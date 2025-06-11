@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 interface ICirculationTemplate extends Document {
+  designation: number;
   trips: mongoose.Types.ObjectId[];
 
   dayType: "weekday" | "saturday" | "sunday";
@@ -8,6 +9,7 @@ interface ICirculationTemplate extends Document {
 }
 
 const circulationTemplateSchema = new Schema<ICirculationTemplate>({
+  designation: { type: Number, required: true, unique: true },
   trips: [{ type: Schema.Types.ObjectId, ref: "TripTemplate", required: true }],
   dayType: {
     type: String,

@@ -25,6 +25,7 @@ const CirculationBuilderForm = () => {
     season: "standard",
   });
 
+  const [designation, setDesignation] = useState<number | "">("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -69,9 +70,10 @@ const CirculationBuilderForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedTrips.length === 0) return;
+    if (selectedTrips.length === 0 || !designation) return;
 
     const payload = {
+      designation: Number(designation),
       trips: selectedTrips.map((t) => t._id),
       dayType: filters.dayType,
       season: filters.season,
@@ -86,6 +88,7 @@ const CirculationBuilderForm = () => {
     if (res.ok) {
       setMessage("✅ Circulation created.");
       setSelectedTrips([]);
+      setDesignation("");
     } else {
       const err = await res.json();
       setMessage(err.message || "❌ Failed to create circulation.");
@@ -95,6 +98,19 @@ const CirculationBuilderForm = () => {
   return (
     <form onSubmit={handleSubmit} className="p-4 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Create Circulation</h1>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Designation</label>
+        <input
+          type="number"
+          min="1"
+          className="p-2 border rounded w-full"
+          placeholder="Enter designation number"
+          value={designation}
+          onChange={(e) => setDesignation(Number(e.target.value))}
+          required
+        />
+      </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
         <input

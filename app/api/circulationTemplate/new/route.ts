@@ -3,37 +3,29 @@ import { CirculationTemplate } from "@/models";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  await connectToDB();
-
   try {
-    const {
-      trips,
-      dayType,
-      season = "standard", // default if not provided
-    } = await req.json();
+    await connectToDB();
+    const data = await req.json();
 
-    if (!trips || !dayType) {
-      return NextResponse.json(
-        { message: "Missing required fields" },
-        { status: 400 }
-      );
+    const { designation, trips, dayType, season } = data;
+
+    if (!designation || !Array.isArray(trips) || !dayType) {
+      return new Response("Missing required fields", { status: 400 });
     }
 
     const newCirculation = new CirculationTemplate({
+      designation,
       trips,
-
       dayType,
-      season,
+      season: season || "standard",
     });
 
     await newCirculation.save();
-
-    return NextResponse.json(newCirculation, { status: 201 });
-  } catch (error) {
-    console.error("❌ Error creating CirculationTemplate:", error);
-    return NextResponse.json(
-      { message: "Error creating circulation" },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify(newCirculation), { status: 201 });
+  } catch (err) {
+    console.error("Failed to create circulation template:", err);
+    return new Response("Failed to create circulation template", {
+      status: 500,
+    });
   }
 }

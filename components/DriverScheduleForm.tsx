@@ -26,6 +26,7 @@ interface Trip {
 
 interface CirculationTemplate {
   _id: string;
+  designation: number;
   trips: Trip[];
 }
 
@@ -165,9 +166,9 @@ const DriverScheduleForm: React.FC<DriverScheduleFormProps> = ({
             {circulations.map((circ) => {
               const first = circ.trips?.[0];
               const last = circ.trips?.[circ.trips.length - 1];
-              const label = `${formatTrip(first)} → ${last?.endStop?.name} at ${
-                last?.endTime
-              }`;
+              const label = `#${circ.designation} | ${formatTrip(first)} → ${
+                last?.endStop?.name
+              } at ${last?.endTime}`;
               return (
                 <option key={circ._id} value={circ._id}>
                   {label}

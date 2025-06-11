@@ -35,6 +35,7 @@ interface ScheduleCirculation {
     name: string;
   };
   circulationTemplate: {
+    designation: number;
     trips: ScheduleTrip[];
   };
 }
@@ -130,10 +131,13 @@ const DriverLocationPage = () => {
         const adjustedStart = Math.max(tripStart, scheduleStart);
         const adjustedEnd = Math.min(tripEnd, scheduleEnd);
 
+        const isStartAdjusted = adjustedStart !== tripStart;
+
         return {
           ...trip,
           startTime: formatTime(adjustedStart),
           endTime: formatTime(adjustedEnd),
+          startStop: isStartAdjusted ? circulation.startStop : trip.startStop,
           isAdjusted: adjustedStart !== tripStart || adjustedEnd !== tripEnd,
         };
       });
@@ -248,8 +252,9 @@ const DriverLocationPage = () => {
                           <li key={j} className="mt-1">
                             <div className="flex justify-between items-start">
                               <div>
-                                🕒 {c.startTime}–{c.endTime} —{" "}
-                                {c.startStop.name} → {c.endStop.name}
+                                #{c.circulationTemplate.designation}🕒{" "}
+                                {c.startTime}–{c.endTime} — {c.startStop.name} →{" "}
+                                {c.endStop.name}
                               </div>
                               {exportOptions.length > 0 && (
                                 <GoogleCalendarExportDropdown
