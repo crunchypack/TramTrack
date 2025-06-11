@@ -1,5 +1,5 @@
 import { connectToDB } from "@/utils/database";
-import CirculationTemplate from "@/models/CirculationTemplate";
+import { CirculationTemplate } from "@/models";
 import "@/models";
 
 export async function GET() {

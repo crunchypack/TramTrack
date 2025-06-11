@@ -1,8 +1,7 @@
 // /api/driverSchedule/[employeeId]/route.ts
 import { connectToDB } from "@/utils/database";
 
-import driverSchedule from "@/models/DriverSchedule";
-import CirculationTemplate from "@/models/CirculationTemplate";
+import { DriverSchedule, CirculationTemplate } from "@/models";
 
 import { Driver } from "@/models";
 
@@ -25,11 +24,10 @@ export async function GET(
       return new Response("Driver not found", { status: 404 });
     }
 
-    const schedule = await driverSchedule
-      .findOne({
-        driver: driver._id,
-        date: new Date(dateQuery),
-      })
+    const schedule = await DriverSchedule.findOne({
+      driver: driver._id,
+      date: new Date(dateQuery),
+    })
       .populate({
         path: "circulations.circulationTemplate",
         model: CirculationTemplate,
