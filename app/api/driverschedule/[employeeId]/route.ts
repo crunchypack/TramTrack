@@ -1,10 +1,10 @@
 // /api/driverSchedule/[employeeId]/route.ts
 import { connectToDB } from "@/utils/database";
-import Driver from "@/models/driver";
+
 import driverSchedule from "@/models/driverSchedule";
 import CirculationTemplate from "@/models/circulationTemplate";
-import TramStop from "@/models/tramStop";
-import "@/models";
+
+import { Driver } from "@/models";
 
 export async function GET(
   req: Request,
