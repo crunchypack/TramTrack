@@ -157,6 +157,7 @@ const DriverLocationPage = () => {
   const getEstimatedCurrentStop = (
     startTime: string,
     route: string[],
+    startStop: string,
     timeBetweenStops: number[]
   ): string | null => {
     const [startH, startM] = startTime.split(":").map(Number);
@@ -167,8 +168,10 @@ const DriverLocationPage = () => {
 
     if (elapsed < 0) return null;
 
-    let cumulative = 0;
-    for (let i = 0; i < timeBetweenStops.length; i++) {
+    let startStopIndex = route.indexOf(startStop);
+
+    let cumulative = startStopIndex;
+    for (let i = startStopIndex; i < timeBetweenStops.length; i++) {
       cumulative += timeBetweenStops[i];
       if (elapsed < cumulative) return route[i];
     }
@@ -306,6 +309,7 @@ const DriverLocationPage = () => {
                                         {getEstimatedCurrentStop(
                                           trip.startTime,
                                           routeNames,
+                                          trip.startStop.name,
                                           trip.tramline.timeBetweenStops ?? []
                                         ) || "N/A"}
                                         )

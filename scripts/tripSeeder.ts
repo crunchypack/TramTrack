@@ -60,6 +60,7 @@ export async function seedTripTemplates({
       tramline: tramLine._id,
       startStop: startStopId,
       heading,
+      season,
     });
     console.log(
       `♻️ Deleted ${deleteResult.deletedCount} existing trip templates`

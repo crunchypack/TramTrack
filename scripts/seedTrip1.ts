@@ -2,7 +2,7 @@
 import { seedTripTemplates } from "./tripSeeder";
 import "dotenv/config";
 
-// Weekday schedule (Monday-Friday)
+// Weekday schedule (Monday-Friday) Tynnered to Östra Sjukhuset
 const weekdayTrips = [
   { hour: 4, minutes: [30, 45] },
   { hour: 5, minutes: [0, 20, 40, 58] },
@@ -21,6 +21,30 @@ const weekdayTrips = [
   { hour: 18, minutes: [2, 12, 22, 32, 42, 52] },
   { hour: 19, minutes: [2, 12, 23, 34, 47, 58] },
   { hour: 20, minutes: [12, 27, 42, 58] },
+];
+const weekdaySummerTrips23 = [
+  { hour: 0, minutes: [4, 16, 46] },
+  { hour: 1, minutes: [16, 30, 32, 56, 59] },
+  { hour: 4, minutes: [30, 45] },
+  { hour: 5, minutes: [0, 20, 39, 40, 57] },
+  { hour: 6, minutes: [12, 27, 40, 41, 52, 54] },
+  { hour: 7, minutes: [6, 9, 19, 24, 31, 39, 43, 54, 55] },
+  { hour: 8, minutes: [7, 9, 19, 24, 31, 39, 43, 54, 55] },
+  { hour: 9, minutes: [7, 9, 19, 24, 31, 39, 43, 54, 55] },
+  { hour: 10, minutes: [7, 9, 19, 24, 31, 39, 43, 54, 55] },
+  { hour: 11, minutes: [7, 9, 19, 24, 31, 39, 43, 55] },
+  { hour: 12, minutes: [7, 19, 31, 43, 55] },
+  { hour: 13, minutes: [7, 19, 19, 31, 44, 56] },
+  { hour: 14, minutes: [8, 20, 32, 44, 56] },
+  { hour: 15, minutes: [8, 20, 32, 44, 56] },
+  { hour: 16, minutes: [8, 20, 32, 44, 56] },
+  { hour: 17, minutes: [7, 19, 31, 43, 55] },
+  { hour: 18, minutes: [7, 19, 32, 45, 57] },
+  { hour: 19, minutes: [9, 24, 39, 55] },
+  { hour: 20, minutes: [10, 25, 40, 55] },
+  { hour: 21, minutes: [10, 28, 48] },
+  { hour: 22, minutes: [6, 26, 46] },
+  { hour: 23, minutes: [6, 26, 37, 49] },
 ];
 
 // Saturday schedule (example - replace with actual times)
@@ -43,6 +67,32 @@ const saturdayTrips = [
   { hour: 21, minutes: [12, 27, 42, 57] },
   { hour: 22, minutes: [12, 27, 42, 57] },
 ];
+const saturdaySummerTrips23 = [
+  { hour: 0, minutes: [9, 19, 29, 39, 49] },
+  { hour: 1, minutes: [9, 29, 49] },
+  { hour: 2, minutes: [9, 29, 49] },
+  { hour: 3, minutes: [9, 29, 49] },
+  { hour: 4, minutes: [8] },
+  { hour: 5, minutes: [24, 54] },
+  { hour: 6, minutes: [24, 54] },
+  { hour: 7, minutes: [24, 54] },
+  { hour: 8, minutes: [25, 45] },
+  { hour: 9, minutes: [5, 25, 44] },
+  { hour: 10, minutes: [1, 16, 31, 46] },
+  { hour: 11, minutes: [1, 16, 31, 46] },
+  { hour: 12, minutes: [1, 16, 31, 46] },
+  { hour: 13, minutes: [1, 16, 31, 46] },
+  { hour: 14, minutes: [1, 16, 31, 46] },
+  { hour: 15, minutes: [1, 16, 31, 46] },
+  { hour: 16, minutes: [1, 16, 31, 46] },
+  { hour: 17, minutes: [1, 16, 31, 46] },
+  { hour: 18, minutes: [1, 16, 31, 46] },
+  { hour: 19, minutes: [1, 16, 31, 46] },
+  { hour: 20, minutes: [1, 16, 31, 46] },
+  { hour: 21, minutes: [1, 16, 31, 46] },
+  { hour: 22, minutes: [1, 16, 31, 46] },
+  { hour: 23, minutes: [1, 16, 31, 40, 49, 59] },
+];
 
 // Sunday schedule (example - replace with actual times)
 const sundayTrips = [
@@ -64,22 +114,253 @@ const sundayTrips = [
   { hour: 21, minutes: [13, 28, 48] },
   { hour: 22, minutes: [6, 26, 46] },
 ];
+const sundaySummerTrips23 = [
+  { hour: 0, minutes: [9, 19, 29, 39, 49] },
+  { hour: 1, minutes: [9, 29, 49] },
+  { hour: 2, minutes: [9, 29, 49] },
+  { hour: 3, minutes: [9, 29, 49] },
+  { hour: 4, minutes: [8] },
+  { hour: 5, minutes: [24, 54] },
+  { hour: 6, minutes: [24, 54] },
+  { hour: 7, minutes: [24, 54] },
+  { hour: 8, minutes: [25, 45] },
+  { hour: 9, minutes: [5, 25, 44] },
+  { hour: 10, minutes: [1, 16, 31, 46] },
+  { hour: 11, minutes: [1, 16, 31, 46] },
+  { hour: 12, minutes: [1, 16, 31, 46] },
+  { hour: 13, minutes: [1, 16, 31, 46] },
+  { hour: 14, minutes: [1, 16, 31, 46] },
+  { hour: 15, minutes: [1, 16, 31, 46] },
+  { hour: 16, minutes: [1, 16, 31, 46] },
+  { hour: 17, minutes: [1, 16, 31, 46] },
+  { hour: 18, minutes: [1, 16, 31, 46] },
+  { hour: 19, minutes: [1, 16, 31, 46] },
+  { hour: 20, minutes: [1, 16, 31, 46] },
+  { hour: 21, minutes: [1, 16, 31, 46] },
+  { hour: 22, minutes: [6, 26, 46] },
+  { hour: 23, minutes: [6, 26, 37, 49] },
+];
+// Östra Sjukhuset to Opaltorget
+// Weekday schedule (Monday-Friday)
+const weekdaySchedule = [
+  { hour: 5, minutes: [10, 25, 40, 55] },
+  { hour: 6, minutes: [10, 24, 38, 50] },
+  { hour: 7, minutes: [1, 11, 20, 29, 38, 48, 56] },
+  { hour: 8, minutes: [6, 14, 25, 36, 45, 55] },
+  { hour: 9, minutes: [6, 16, 26, 35, 46, 56] },
+  { hour: 10, minutes: [6, 15, 26, 36, 46, 55] },
+  { hour: 11, minutes: [6, 15, 26, 35, 46, 55] },
+  { hour: 12, minutes: [6, 15, 26, 36, 46, 56] },
+  { hour: 13, minutes: [6, 17, 26, 36, 46, 56] },
+  { hour: 14, minutes: [5, 14, 24, 33, 42, 49, 57] },
+  { hour: 15, minutes: [5, 14, 22, 29, 38, 46, 54] },
+  { hour: 16, minutes: [2, 10, 18, 26, 34, 42, 50, 58] },
+  { hour: 17, minutes: [6, 14, 23, 31, 40, 48, 57] },
+  { hour: 18, minutes: [6, 15, 23, 34, 42, 51] },
+  { hour: 19, minutes: [1, 12, 24, 36, 48] },
+  { hour: 20, minutes: [0, 13, 28, 43, 58] },
+  { hour: 21, minutes: [13, 28, 43, 58, 59] },
+  { hour: 22, minutes: [13, 17, 28, 37, 43, 57, 58] },
+];
+const weekdaySummerSchedule23 = [
+  { hour: 0, minutes: [20, 43] },
+  { hour: 1, minutes: [10, 40] },
+  { hour: 2, minutes: [4] },
+  { hour: 4, minutes: [30, 50] },
+  { hour: 5, minutes: [10, 25, 39, 40, 54, 55] },
+  { hour: 6, minutes: [9, 10, 25, 26, 40, 41, 52, 54] },
+  { hour: 7, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 8, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 9, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 10, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 11, minutes: [6, 18, 30, 42, 54] },
+  { hour: 12, minutes: [6, 18, 30, 42, 54] },
+  { hour: 13, minutes: [6, 18, 30, 42, 53] },
+  { hour: 14, minutes: [5, 17, 29, 41, 53] },
+  { hour: 15, minutes: [5, 17, 29, 41, 53] },
+  { hour: 16, minutes: [5, 17, 29, 41, 53] },
+  { hour: 17, minutes: [5, 19, 31, 43, 55] },
+  { hour: 18, minutes: [7, 19, 31, 43, 59] },
+  { hour: 19, minutes: [14, 28, 43, 58] },
+  { hour: 20, minutes: [13, 28, 43, 58] },
+  { hour: 21, minutes: [13, 28, 43, 59] },
+  { hour: 22, minutes: [17, 37, 57] },
+  { hour: 23, minutes: [17, 37, 58] },
+];
 
-async function seedLine1() {
+// Saturday schedule
+const saturdaySchedule = [
+  { hour: 5, minutes: [15, 45] },
+  { hour: 6, minutes: [15, 45] },
+  { hour: 7, minutes: [15, 45] },
+  { hour: 8, minutes: [14, 33, 48] },
+  { hour: 9, minutes: [3, 18, 33, 48] },
+  { hour: 10, minutes: [2, 14, 26, 38, 50] },
+  { hour: 11, minutes: [2, 17, 27, 36, 46, 56] },
+  { hour: 12, minutes: [6, 16, 26, 36, 46, 56] },
+  { hour: 13, minutes: [6, 16, 26, 36, 46, 56] },
+  { hour: 14, minutes: [6, 16, 26, 36, 46, 56] },
+  { hour: 15, minutes: [6, 16, 26, 36, 46, 56] },
+  { hour: 16, minutes: [7, 17, 27, 37, 47, 57] },
+  { hour: 17, minutes: [7, 17, 24, 35, 46, 58] },
+  { hour: 18, minutes: [10, 22, 34, 46, 58] },
+  { hour: 19, minutes: [13, 28, 43, 58] },
+  { hour: 20, minutes: [13, 28, 43, 58] },
+  { hour: 21, minutes: [13, 28, 43, 58] },
+  { hour: 22, minutes: [13, 28, 43, 58] },
+];
+const saturdaySummerSchedule23 = [
+  { hour: 0, minutes: [18, 38, 58] },
+  { hour: 1, minutes: [18, 38, 58] },
+  { hour: 2, minutes: [18, 38, 58] },
+  { hour: 3, minutes: [18, 38, 58] },
+  { hour: 4, minutes: [15, 35] },
+  { hour: 5, minutes: [15, 45] },
+  { hour: 6, minutes: [15, 45] },
+  { hour: 7, minutes: [15, 45] },
+  { hour: 8, minutes: [13, 33, 53] },
+  { hour: 9, minutes: [13, 33, 53] },
+  { hour: 10, minutes: [11, 26, 41, 56] },
+  { hour: 11, minutes: [11, 26, 41, 56] },
+  { hour: 12, minutes: [11, 26, 41, 56] },
+  { hour: 13, minutes: [11, 26, 41, 56] },
+  { hour: 14, minutes: [11, 26, 41, 56] },
+  { hour: 15, minutes: [11, 26, 41, 56] },
+  { hour: 16, minutes: [11, 26, 41, 56] },
+  { hour: 17, minutes: [11, 26, 41, 56] },
+  { hour: 18, minutes: [11, 26, 41, 56] },
+  { hour: 19, minutes: [11, 26, 41, 56] },
+  { hour: 20, minutes: [11, 26, 41, 56] },
+  { hour: 21, minutes: [11, 26, 41, 56] },
+  { hour: 22, minutes: [11, 26, 41, 56] },
+  { hour: 23, minutes: [11, 26, 41, 58] },
+];
+const sundaySummerSchedule23 = [
+  { hour: 0, minutes: [18, 38, 58] },
+  { hour: 1, minutes: [18, 38, 58] },
+  { hour: 2, minutes: [18, 38, 58] },
+  { hour: 3, minutes: [18, 38, 58] },
+  { hour: 4, minutes: [15, 35] },
+  { hour: 5, minutes: [15, 45] },
+  { hour: 6, minutes: [15, 45] },
+  { hour: 7, minutes: [15, 45] },
+  { hour: 8, minutes: [13, 33, 53] },
+  { hour: 9, minutes: [13, 33, 53] },
+  { hour: 10, minutes: [11, 26, 41, 56] },
+  { hour: 11, minutes: [11, 26, 41, 56] },
+  { hour: 12, minutes: [11, 26, 41, 56] },
+  { hour: 13, minutes: [11, 26, 41, 56] },
+  { hour: 14, minutes: [11, 26, 41, 56] },
+  { hour: 15, minutes: [11, 26, 41, 56] },
+  { hour: 16, minutes: [11, 26, 41, 56] },
+  { hour: 17, minutes: [11, 26, 41, 56] },
+  { hour: 18, minutes: [11, 26, 41, 56] },
+  { hour: 19, minutes: [11, 26, 41, 56] },
+  { hour: 20, minutes: [11, 26, 41, 56] },
+  { hour: 21, minutes: [11, 26, 41, 56] },
+  { hour: 22, minutes: [17, 37, 57] },
+  { hour: 23, minutes: [17, 37, 58] },
+];
+// Sunday schedule
+const sundaySchedule = [
+  { hour: 5, minutes: [15, 45] },
+  { hour: 6, minutes: [15, 45] },
+  { hour: 7, minutes: [15, 45] },
+  { hour: 8, minutes: [14, 34, 54] },
+  { hour: 9, minutes: [14, 34, 53] },
+  { hour: 10, minutes: [13, 31, 46] },
+  { hour: 11, minutes: [1, 15, 29, 41, 53] },
+  { hour: 12, minutes: [5, 17, 29, 41, 53] },
+  { hour: 13, minutes: [5, 17, 29, 41, 53] },
+  { hour: 14, minutes: [5, 17, 29, 41, 53] },
+  { hour: 15, minutes: [5, 17, 29, 41, 53] },
+  { hour: 16, minutes: [5, 17, 29, 41, 53] },
+  { hour: 17, minutes: [5, 17, 29, 41, 53] },
+  { hour: 18, minutes: [5, 17, 29, 44, 58] },
+  { hour: 19, minutes: [13, 28, 43, 58] },
+  { hour: 20, minutes: [13, 28, 44, 58] },
+  { hour: 21, minutes: [13, 28, 43, 59] },
+  { hour: 22, minutes: [17, 37, 57] },
+];
+// seed the tram line 1 trips standard schedule
+async function seedLine() {
+  await seedTripTemplates({
+    tramLineNumber: 1,
+    startStopName: "Opaltorget",
+    endStopName: "Östra Sjukhuset",
+    heading: "Östra Sjukhuset",
+    tripDurationMinutes: 45,
+    weekdaySchedule: weekdayTrips,
+    saturdaySchedule: saturdayTrips,
+    sundaySchedule: sundayTrips,
+    season: "standard",
+  });
+}
+// seed the tram line 1 trips summer schedule
+async function seedLineSummer() {
+  await seedTripTemplates({
+    tramLineNumber: 1,
+    startStopName: "Opaltorget",
+    endStopName: "Östra Sjukhuset",
+    heading: "Östra Sjukhuset",
+    tripDurationMinutes: 45, // Adjust based on actual travel time
+    weekdaySchedule: weekdaySummerTrips23,
+    saturdaySchedule: saturdaySummerTrips23,
+    sundaySchedule: sundaySummerTrips23,
+    season: "summer",
+  });
+}
+// seed the tram line 1 trips reverse standard schedule
+async function seedLineRev() {
+  await seedTripTemplates({
+    tramLineNumber: 1,
+    startStopName: "Östra Sjukhuset",
+    endStopName: "Opaltorget",
+    heading: "Tynnered",
+    tripDurationMinutes: 45, // Adjust based on actual travel time
+    weekdaySchedule,
+    saturdaySchedule,
+    sundaySchedule,
+    season: "standard",
+  });
+}
+// seed the tram line 1 trips reverse summer schedule
+async function seedLineRevSummer() {
+  await seedTripTemplates({
+    tramLineNumber: 1,
+    startStopName: "Östra Sjukhuset",
+    endStopName: "Opaltorget",
+    heading: "Tynnered",
+    tripDurationMinutes: 45, // Adjust based on actual travel time
+    weekdaySchedule: weekdaySummerSchedule23,
+    saturdaySchedule: saturdaySummerSchedule23,
+    sundaySchedule: sundaySummerSchedule23,
+    season: "summer",
+  });
+}
+async function main() {
   try {
-    await seedTripTemplates({
-      tramLineNumber: 1,
-      startStopName: "Opaltorget",
-      endStopName: "Östra Sjukhuset",
-      heading: "Östra Sjukhuset",
-      tripDurationMinutes: 45,
-      weekdaySchedule: weekdayTrips,
-      saturdaySchedule: saturdayTrips,
-      sundaySchedule: sundayTrips,
-    });
+    await seedLine();
+    await seedLineRev();
+    console.log("Tram Line 10 trip templates seeded successfully.");
     process.exit(0);
   } catch (error) {
+    console.error("Error seeding line 10:", error);
     process.exit(1);
   }
 }
-seedLine1();
+async function mainSummer() {
+  try {
+    await seedLineSummer();
+    await seedLineRevSummer();
+    console.log("Tram Line 1 summer trip templates seeded successfully.");
+    process.exit(0);
+  } catch (error) {
+    console.error("Error seeding line 11 summer:", error);
+    process.exit(1);
+  }
+}
+
+main();
+// Uncomment the following lines to seed the summer schedules
+//mainSummer();
