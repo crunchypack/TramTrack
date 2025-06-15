@@ -5,6 +5,7 @@ import CirculationTemplate from "./CirculationTemplate";
 import TramStop from "./TramStop";
 import TripTemplate from "./TripTemplate";
 import TramLine from "./TramLine";
+import PlannedWorkday from "./PlannedWorkday";
 
 export {
   Driver,
@@ -13,4 +14,5 @@ export {
   TramStop,
   TripTemplate,
   TramLine,
+  PlannedWorkday,
 };

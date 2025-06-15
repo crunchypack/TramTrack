@@ -4,7 +4,7 @@ import { TramLine } from "@/models";
 export async function GET(req: Request) {
   try {
     await connectToDB();
-    const tramlines = await TramLine.find({});
+    const tramlines = await TramLine.find({}).populate("route", "name");
     return new Response(JSON.stringify(tramlines), { status: 200 });
   } catch (error) {
     console.log(error);
