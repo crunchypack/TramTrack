@@ -22,6 +22,30 @@ const weekdayTrips = [
   { hour: 19, minutes: [2, 12, 23, 34, 47, 58] },
   { hour: 20, minutes: [12, 27, 42, 58] },
 ];
+const weekdaySummerTrips16 = [
+  { hour: 0, minutes: [4, 16, 46] },
+  { hour: 1, minutes: [16, 30, 32, 56, 59] },
+  { hour: 4, minutes: [30, 45] },
+  { hour: 5, minutes: [0, 20, 40] },
+  { hour: 6, minutes: [13, 28, 43, 55] },
+  { hour: 7, minutes: [8, 20, 32, 44, 56] },
+  { hour: 8, minutes: [8, 20, 32, 44, 56] },
+  { hour: 9, minutes: [8, 20, 32, 44, 56] },
+  { hour: 10, minutes: [8, 20, 32, 44, 56] },
+  { hour: 11, minutes: [8, 20, 32, 44, 56] },
+  { hour: 12, minutes: [8, 20, 32, 44, 56] },
+  { hour: 13, minutes: [8, 20, 32, 44, 56] },
+  { hour: 14, minutes: [8, 20, 32, 44, 56] },
+  { hour: 15, minutes: [8, 20, 32, 44, 56] },
+  { hour: 16, minutes: [8, 20, 32, 44, 56] },
+  { hour: 17, minutes: [8, 20, 32, 44, 56] },
+  { hour: 18, minutes: [8, 20, 32, 45, 57] },
+  { hour: 19, minutes: [10, 24, 40, 55] },
+  { hour: 20, minutes: [10, 25, 40, 55] },
+  { hour: 21, minutes: [10, 28, 48] },
+  { hour: 22, minutes: [6, 26, 46] },
+  { hour: 23, minutes: [6, 26, 37, 49] },
+];
 const weekdaySummerTrips23 = [
   { hour: 0, minutes: [4, 16, 46] },
   { hour: 1, minutes: [16, 30, 32, 56, 59] },
@@ -47,7 +71,7 @@ const weekdaySummerTrips23 = [
   { hour: 23, minutes: [6, 26, 37, 49] },
 ];
 
-// Saturday schedule (example - replace with actual times)
+// Saturday schedule
 const saturdayTrips = [
   { hour: 6, minutes: [24, 54] },
   { hour: 7, minutes: [24, 54] },
@@ -66,6 +90,30 @@ const saturdayTrips = [
   { hour: 20, minutes: [12, 27, 42, 57] },
   { hour: 21, minutes: [12, 27, 42, 57] },
   { hour: 22, minutes: [12, 27, 42, 57] },
+];
+const saturdaySummerTrips16 = [
+  { hour: 0, minutes: [4, 16, 46] },
+  { hour: 1, minutes: [16, 30, 56] },
+  { hour: 2, minutes: [9, 29, 49] },
+  { hour: 5, minutes: [24, 54] },
+  { hour: 6, minutes: [24, 54] },
+  { hour: 7, minutes: [24, 54] },
+  { hour: 8, minutes: [25, 45] },
+  { hour: 9, minutes: [5, 25, 44] },
+  { hour: 10, minutes: [1, 16, 31, 46] },
+  { hour: 11, minutes: [1, 16, 31, 46] },
+  { hour: 12, minutes: [1, 16, 31, 46] },
+  { hour: 13, minutes: [1, 16, 31, 46] },
+  { hour: 14, minutes: [1, 16, 31, 46] },
+  { hour: 15, minutes: [1, 16, 31, 46] },
+  { hour: 16, minutes: [1, 16, 31, 46] },
+  { hour: 17, minutes: [1, 16, 31, 46] },
+  { hour: 18, minutes: [1, 16, 31, 46] },
+  { hour: 19, minutes: [1, 16, 31, 46] },
+  { hour: 20, minutes: [1, 16, 31, 46] },
+  { hour: 21, minutes: [1, 16, 31, 46] },
+  { hour: 22, minutes: [1, 16, 31, 46] },
+  { hour: 23, minutes: [1, 16, 31, 40, 49, 59] },
 ];
 const saturdaySummerTrips23 = [
   { hour: 0, minutes: [9, 19, 29, 39, 49] },
@@ -113,6 +161,32 @@ const sundayTrips = [
   { hour: 20, minutes: [12, 27, 42, 57] },
   { hour: 21, minutes: [13, 28, 48] },
   { hour: 22, minutes: [6, 26, 46] },
+];
+const sundaySummerTrips16 = [
+  { hour: 0, minutes: [4, 9, 16, 19, 29, 39, 46, 49] },
+  { hour: 1, minutes: [9, 16, 29, 30, 49, 59] },
+  { hour: 2, minutes: [9, 29, 49] },
+  { hour: 3, minutes: [9, 29, 49] },
+  { hour: 4, minutes: [8] },
+  { hour: 5, minutes: [24, 54] },
+  { hour: 6, minutes: [24, 54] },
+  { hour: 7, minutes: [24, 54] },
+  { hour: 8, minutes: [25, 45] },
+  { hour: 9, minutes: [5, 25, 44] },
+  { hour: 10, minutes: [1, 16, 31, 46] },
+  { hour: 11, minutes: [1, 16, 31, 46] },
+  { hour: 12, minutes: [1, 16, 31, 46] },
+  { hour: 13, minutes: [1, 16, 31, 46] },
+  { hour: 14, minutes: [1, 16, 31, 46] },
+  { hour: 15, minutes: [1, 16, 31, 46] },
+  { hour: 16, minutes: [1, 16, 31, 46] },
+  { hour: 17, minutes: [1, 16, 31, 46] },
+  { hour: 18, minutes: [1, 16, 31, 46] },
+  { hour: 19, minutes: [1, 16, 31, 46] },
+  { hour: 20, minutes: [1, 16, 31, 46] },
+  { hour: 21, minutes: [1, 16, 31, 46] },
+  { hour: 22, minutes: [6, 26, 46] },
+  { hour: 23, minutes: [6, 26, 37, 49] },
 ];
 const sundaySummerTrips23 = [
   { hour: 0, minutes: [9, 19, 29, 39, 49] },
@@ -162,6 +236,31 @@ const weekdaySchedule = [
   { hour: 21, minutes: [13, 28, 43, 58, 59] },
   { hour: 22, minutes: [13, 17, 28, 37, 43, 57, 58] },
 ];
+const weekdaySummerSchedule16 = [
+  { hour: 0, minutes: [20, 43] },
+  { hour: 1, minutes: [10, 40] },
+  { hour: 2, minutes: [4] },
+  { hour: 4, minutes: [30, 50] },
+  { hour: 5, minutes: [10, 25, 39, 40, 54, 55] },
+  { hour: 6, minutes: [9, 10, 25, 26, 40, 41, 52, 54] },
+  { hour: 7, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 8, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 9, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 10, minutes: [6, 8, 18, 23, 30, 38, 42, 53, 54] },
+  { hour: 11, minutes: [6, 18, 30, 42, 54] },
+  { hour: 12, minutes: [6, 18, 30, 42, 54] },
+  { hour: 13, minutes: [6, 18, 30, 42, 53] },
+  { hour: 14, minutes: [5, 17, 29, 41, 53] },
+  { hour: 15, minutes: [5, 17, 29, 41, 53] },
+  { hour: 16, minutes: [5, 17, 29, 41, 53] },
+  { hour: 17, minutes: [5, 19, 31, 43, 55] },
+  { hour: 18, minutes: [7, 19, 31, 43, 59] },
+  { hour: 19, minutes: [14, 28, 43, 58] },
+  { hour: 20, minutes: [13, 28, 43, 58] },
+  { hour: 21, minutes: [13, 28, 43, 59] },
+  { hour: 22, minutes: [17, 37, 57] },
+  { hour: 23, minutes: [17, 37, 58] },
+];
 const weekdaySummerSchedule23 = [
   { hour: 0, minutes: [20, 43] },
   { hour: 1, minutes: [10, 40] },
@@ -209,6 +308,30 @@ const saturdaySchedule = [
   { hour: 21, minutes: [13, 28, 43, 58] },
   { hour: 22, minutes: [13, 28, 43, 58] },
 ];
+const saturdaySummerSchedule16 = [
+  { hour: 0, minutes: [20, 43] },
+  { hour: 1, minutes: [10, 40] },
+  { hour: 2, minutes: [4] },
+  { hour: 5, minutes: [15, 45] },
+  { hour: 6, minutes: [15, 45] },
+  { hour: 7, minutes: [15, 45] },
+  { hour: 8, minutes: [13, 33, 53] },
+  { hour: 9, minutes: [13, 33, 53] },
+  { hour: 10, minutes: [12, 27, 42, 57] },
+  { hour: 11, minutes: [12, 27, 42, 57] },
+  { hour: 12, minutes: [12, 27, 42, 57] },
+  { hour: 13, minutes: [12, 27, 42, 57] },
+  { hour: 14, minutes: [12, 27, 42, 57] },
+  { hour: 15, minutes: [12, 27, 42, 57] },
+  { hour: 16, minutes: [12, 27, 42, 57] },
+  { hour: 17, minutes: [12, 27, 42, 57] },
+  { hour: 18, minutes: [12, 27, 42, 57] },
+  { hour: 19, minutes: [12, 27, 42, 57] },
+  { hour: 20, minutes: [12, 27, 42, 57] },
+  { hour: 21, minutes: [12, 27, 42, 57] },
+  { hour: 22, minutes: [12, 27, 42, 57] },
+  { hour: 23, minutes: [12, 27, 42, 58] },
+];
 const saturdaySummerSchedule23 = [
   { hour: 0, minutes: [18, 38, 58] },
   { hour: 1, minutes: [18, 38, 58] },
@@ -234,6 +357,32 @@ const saturdaySummerSchedule23 = [
   { hour: 21, minutes: [11, 26, 41, 56] },
   { hour: 22, minutes: [11, 26, 41, 56] },
   { hour: 23, minutes: [11, 26, 41, 58] },
+];
+const sundaySummerSchedule16 = [
+  { hour: 0, minutes: [18, 20, 38, 40, 58] },
+  { hour: 1, minutes: [10, 18, 38, 40, 58] },
+  { hour: 2, minutes: [4, 18, 38, 58] },
+  { hour: 3, minutes: [18, 38, 58] },
+  { hour: 4, minutes: [15, 35] },
+  { hour: 5, minutes: [15, 45] },
+  { hour: 6, minutes: [15, 45] },
+  { hour: 7, minutes: [15, 45] },
+  { hour: 8, minutes: [13, 33, 53] },
+  { hour: 9, minutes: [13, 33, 53] },
+  { hour: 10, minutes: [12, 27, 42, 57] },
+  { hour: 11, minutes: [12, 27, 42, 57] },
+  { hour: 12, minutes: [12, 27, 42, 57] },
+  { hour: 13, minutes: [12, 27, 42, 57] },
+  { hour: 14, minutes: [12, 27, 42, 57] },
+  { hour: 15, minutes: [12, 27, 42, 57] },
+  { hour: 16, minutes: [12, 27, 42, 57] },
+  { hour: 17, minutes: [12, 27, 42, 57] },
+  { hour: 18, minutes: [12, 27, 42, 57] },
+  { hour: 19, minutes: [12, 27, 42, 57] },
+  { hour: 20, minutes: [12, 27, 42, 57] },
+  { hour: 21, minutes: [12, 27, 42, 57] },
+  { hour: 22, minutes: [17, 37, 57] },
+  { hour: 23, minutes: [17, 37, 58] },
 ];
 const sundaySummerSchedule23 = [
   { hour: 0, minutes: [18, 38, 58] },
@@ -304,9 +453,9 @@ async function seedLineSummer() {
     endStopName: "Östra Sjukhuset",
     heading: "Östra Sjukhuset",
     tripDurationMinutes: 45, // Adjust based on actual travel time
-    weekdaySchedule: weekdaySummerTrips23,
-    saturdaySchedule: saturdaySummerTrips23,
-    sundaySchedule: sundaySummerTrips23,
+    weekdaySchedule: weekdaySummerTrips16,
+    saturdaySchedule: saturdaySummerTrips16,
+    sundaySchedule: sundaySummerTrips16,
     season: "summer",
   });
 }
@@ -332,9 +481,9 @@ async function seedLineRevSummer() {
     endStopName: "Opaltorget",
     heading: "Tynnered",
     tripDurationMinutes: 45, // Adjust based on actual travel time
-    weekdaySchedule: weekdaySummerSchedule23,
-    saturdaySchedule: saturdaySummerSchedule23,
-    sundaySchedule: sundaySummerSchedule23,
+    weekdaySchedule: weekdaySummerSchedule16,
+    saturdaySchedule: saturdaySummerSchedule16,
+    sundaySchedule: sundaySummerSchedule16,
     season: "summer",
   });
 }
@@ -361,6 +510,6 @@ async function mainSummer() {
   }
 }
 
-main();
+//main();
 // Uncomment the following lines to seed the summer schedules
-//mainSummer();
+mainSummer();

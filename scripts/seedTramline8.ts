@@ -26,10 +26,15 @@ const line8Forward = [
   "Redbergsplatsen",
   "Ejdergatan",
   "Gamlestads Torg",
-  "Hjällbo",
-  "Hammarkullen",
-  "Storås",
-  "Angered Centrum",
+  "SKF",
+  "Bellevue",
+  "Kviberg",
+  "Beväringsgatan",
+  "Nymånegatan",
+  //"Hjällbo",
+  // "Hammarkullen",
+  // "Storås",
+  // "Angered Centrum",
 ];
 
 const timeBetweenForward = [
@@ -53,10 +58,16 @@ const timeBetweenForward = [
   2, // Olskrokstorget → Redbergsplatsen
   1, // Redbergsplatsen → Ejdergatan
   3, // Ejdergatan → Gamlestads Torg
-  6, // Gamlestads Torg → Hjällbo
-  2, // Hjällbo → Hammarkullen
-  2, // Hammarkullen → Storås
-  3, // Storås → Angered Centrum
+  /**SOMMAR */
+  1, // Gamlestads Torg → SKF
+  2, // SKF → Bellevue
+  1, // Bellevue → Kviberg
+  1, // Kviberg → Beväringsgatan
+  0, // Beväringsgatan → Nymånegatan
+  // 6, // Gamlestads Torg → Hjällbo
+  // 2, // Hjällbo → Hammarkullen
+  // 2, // Hammarkullen → Storås
+  // 3, // Storås → Angered Centrum
 ];
 
 const line8Reverse = [...line8Forward].reverse();
@@ -86,7 +97,7 @@ async function seedTramLines() {
   const lines = [
     {
       number: 8,
-      direction: "Angered Centrum",
+      direction: "Nymånegatan",
       route: forwardStopIds,
       timeBetweenStops: timeBetweenForward,
     },

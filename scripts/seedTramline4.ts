@@ -5,10 +5,11 @@ import TramStop from "../models/TramStop";
 import TramLine from "../models/TramLine";
 
 const line4Forward = [
-  "Angered Centrum",
-  "Storås",
-  "Hammarkullen",
-  "Hjällbo",
+  "Nymånegatan",
+  "Beväringsgatan",
+  "Kviberg",
+  "Bellevue",
+  "SKF",
   "Gamlestads Torg",
   "Centralstationen",
   "Brunnsparken",
@@ -29,10 +30,11 @@ const line4Forward = [
 ];
 
 const timeBetweenForward = [
-  2, // Angered Centrum → Storås
-  1, // Storås → Hammarkullen
-  3, // Hammarkullen → Hjällbo
-  6, // Hjällbo → Gamlestads Torg
+  0, // Angered Centrum → Storås Summer Nymånegatan -> Beväringsgatan
+  1, // Storås → Hammarkullen Summer Beväringsgatan → Kviberg
+  2, // Hammarkullen → Hjällbo Summer Kviberg → Bellevue
+  1, // Hjällbo → Gamlestads Torg Summer Bellevue → SKF
+  2, // SKF → Gamlestads Torg
   2, // Gamlestads Torg → Centralstationen
   1, // Centralstationen → Brunnsparken
   3, // Brunnsparken → Kungsportsplatsen
@@ -77,7 +79,7 @@ async function seedTramLines() {
     },
     {
       number: 4,
-      direction: "Angered",
+      direction: "Nymånegatan",
       route: reverseStopIds,
       timeBetweenStops: timeBetweenReverse,
     },

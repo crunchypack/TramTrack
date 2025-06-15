@@ -21,6 +21,27 @@ const weekdaySchedule = [
   { hour: 22, minutes: [3, 10, 23, 25, 40, 43, 55] }, // Removed de/c suffixes
   { hour: 23, minutes: [3, 10, 23, 25, 39, 43, 54] }, // Removed de/cf/df suffixes
 ];
+// Frölunda  - Nymånegatan Schedule
+const weekdayScheduleNym = [
+  { hour: 6, minutes: [4, 28, 41, 56] },
+  { hour: 7, minutes: [11, 26, 41, 56] },
+  { hour: 8, minutes: [11, 26, 41, 55] },
+  { hour: 9, minutes: [10, 25, 40, 55] },
+  { hour: 10, minutes: [10, 25, 40, 55] },
+  { hour: 11, minutes: [10, 25, 40, 55] },
+  { hour: 12, minutes: [8, 20, 32, 44, 56] },
+  { hour: 13, minutes: [8, 20, 32, 44, 56] },
+  { hour: 14, minutes: [8, 20, 32, 44, 56] },
+  { hour: 15, minutes: [8, 20, 32, 44, 56] },
+  { hour: 16, minutes: [8, 20, 32, 44, 56] },
+  { hour: 17, minutes: [8, 20, 32, 44, 56] },
+  { hour: 18, minutes: [8, 20, 32, 44, 56] },
+  { hour: 19, minutes: [8, 22, 35, 49] },
+  { hour: 20, minutes: [2, 19, 34, 49] },
+  { hour: 21, minutes: [4, 19, 34, 36, 49, 56] },
+  { hour: 22, minutes: [4, 19, 35, 50] },
+  { hour: 23, minutes: [5, 20] },
+];
 
 // Saturday Schedule
 const saturdaySchedule = [
@@ -41,6 +62,25 @@ const saturdaySchedule = [
   { hour: 21, minutes: [10, 25, 40, 55] },
   { hour: 22, minutes: [10, 25, 40, 55] },
   { hour: 23, minutes: [10, 25, 39, 54] }, // Removed f suffix
+];
+const saturdayScheduleNym = [
+  { hour: 7, minutes: [32] },
+  { hour: 8, minutes: [2, 32, 52] },
+  { hour: 9, minutes: [12, 32, 52] },
+  { hour: 10, minutes: [13, 33, 50] },
+  { hour: 11, minutes: [5, 20, 35, 50] },
+  { hour: 12, minutes: [5, 20, 35, 50] },
+  { hour: 13, minutes: [5, 20, 35, 50] },
+  { hour: 14, minutes: [5, 20, 35, 50] },
+  { hour: 15, minutes: [5, 20, 35, 50] },
+  { hour: 16, minutes: [5, 20, 35, 50] },
+  { hour: 17, minutes: [5, 20, 35, 50] },
+  { hour: 18, minutes: [5, 20, 35, 50] },
+  { hour: 19, minutes: [5, 20, 35, 50] },
+  { hour: 20, minutes: [5, 20, 35, 50] },
+  { hour: 21, minutes: [5, 20, 35, 50] },
+  { hour: 22, minutes: [5, 20, 37, 52] },
+  { hour: 23, minutes: [7, 22] },
 ];
 
 // Sunday Schedule
@@ -63,6 +103,24 @@ const sundaySchedule = [
   { hour: 22, minutes: [3, 23, 43] }, // Removed e suffix
   { hour: 23, minutes: [3, 23, 43] }, // Removed e/f suffix
 ];
+const sundayScheduleNym = [
+  { hour: 7, minutes: [32] },
+  { hour: 8, minutes: [2, 32, 52] },
+  { hour: 9, minutes: [12, 32, 52] },
+  { hour: 10, minutes: [13, 33, 50] },
+  { hour: 11, minutes: [5, 20, 35, 50] },
+  { hour: 12, minutes: [5, 20, 35, 50] },
+  { hour: 13, minutes: [5, 20, 35, 50] },
+  { hour: 14, minutes: [5, 20, 35, 50] },
+  { hour: 15, minutes: [5, 20, 35, 50] },
+  { hour: 16, minutes: [5, 20, 35, 50] },
+  { hour: 17, minutes: [5, 20, 35, 50] },
+  { hour: 18, minutes: [5, 20, 35, 50] },
+  { hour: 19, minutes: [5, 20, 35, 50] },
+  { hour: 20, minutes: [5, 20, 35, 50] },
+  { hour: 21, minutes: [5, 20, 37, 57] },
+];
+
 // Frölunda - Angered Schedule
 const weekdayScheduleRev = [
   { hour: 6, minutes: [4, 24, 38, 46] },
@@ -84,6 +142,30 @@ const weekdayScheduleRev = [
   { hour: 22, minutes: [4, 19, 36, 50] },
   { hour: 23, minutes: [5, 20] },
 ];
+// Nymånegatan - Frölunda Schedule
+const weekdayScheduleNymRev = [
+  { hour: 0, minutes: [10] },
+  { hour: 5, minutes: [36] },
+  { hour: 6, minutes: [5, 21, 37, 53] },
+  { hour: 7, minutes: [6, 21, 36, 51] },
+  { hour: 8, minutes: [6, 21, 36, 51] },
+  { hour: 9, minutes: [6, 21, 36, 51] },
+  { hour: 10, minutes: [6, 21, 36, 51] },
+  { hour: 11, minutes: [6, 21, 33, 45, 57] },
+  { hour: 12, minutes: [9, 21, 33, 45, 57] },
+  { hour: 13, minutes: [9, 21, 33, 45, 57] },
+  { hour: 14, minutes: [9, 21, 33, 45, 57] },
+  { hour: 15, minutes: [9, 21, 33, 45, 57] },
+  { hour: 16, minutes: [9, 21, 33, 45, 57] },
+  { hour: 17, minutes: [9, 21, 33, 45, 57] },
+  { hour: 18, minutes: [9, 21, 33, 45, 57] },
+  { hour: 19, minutes: [9, 21, 33, 47] },
+  { hour: 20, minutes: [3, 17, 32, 46] },
+  { hour: 21, minutes: [1, 16, 31, 50] },
+  { hour: 22, minutes: [3, 18, 33, 48] },
+  { hour: 23, minutes: [3, 18, 33, 46, 50] },
+];
+
 // Saturday Schedule
 const saturdayScheduleRev = [
   { hour: 7, minutes: [31] },
@@ -104,6 +186,27 @@ const saturdayScheduleRev = [
   { hour: 22, minutes: [4, 19, 36, 51] },
   { hour: 23, minutes: [6, 21] },
 ];
+const saturdayScheduleNymRev = [
+  { hour: 0, minutes: [1, 16] },
+  { hour: 7, minutes: [36] },
+  { hour: 8, minutes: [6, 36] },
+  { hour: 9, minutes: [6, 27, 47] },
+  { hour: 10, minutes: [7, 26, 44, 59] },
+  { hour: 11, minutes: [14, 29, 44, 59] },
+  { hour: 12, minutes: [14, 29, 44, 59] },
+  { hour: 13, minutes: [14, 29, 44, 59] },
+  { hour: 14, minutes: [14, 29, 44, 59] },
+  { hour: 15, minutes: [14, 29, 44, 59] },
+  { hour: 16, minutes: [14, 29, 44, 59] },
+  { hour: 17, minutes: [14, 29, 44, 59] },
+  { hour: 18, minutes: [14, 29, 44, 59] },
+  { hour: 19, minutes: [14, 29, 44, 59] },
+  { hour: 20, minutes: [14, 29, 44, 59] },
+  { hour: 21, minutes: [14, 29, 44, 59] },
+  { hour: 22, minutes: [14, 29, 44, 59] },
+  { hour: 23, minutes: [14, 30, 45] },
+];
+
 // Sunday Schedule
 const sundayScheduleRev = [
   { hour: 7, minutes: [31] },
@@ -122,6 +225,26 @@ const sundayScheduleRev = [
   { hour: 20, minutes: [5, 19, 34, 49] },
   { hour: 21, minutes: [4, 19, 36, 56] },
 ];
+const sundayScheduleNymRev = [
+  { hour: 0, minutes: [1, 16] },
+  { hour: 7, minutes: [36] },
+  { hour: 8, minutes: [6, 36] },
+  { hour: 9, minutes: [6, 27, 47] },
+  { hour: 10, minutes: [7, 26, 44, 59] },
+  { hour: 11, minutes: [14, 29, 44, 59] },
+  { hour: 12, minutes: [14, 29, 44, 59] },
+  { hour: 13, minutes: [14, 29, 44, 59] },
+  { hour: 14, minutes: [14, 29, 44, 59] },
+  { hour: 15, minutes: [14, 29, 44, 59] },
+  { hour: 16, minutes: [14, 29, 44, 59] },
+  { hour: 17, minutes: [14, 29, 44, 59] },
+  { hour: 18, minutes: [14, 29, 44, 59] },
+  { hour: 19, minutes: [14, 29, 44, 59] },
+  { hour: 20, minutes: [14, 29, 44, 59] },
+  { hour: 21, minutes: [14, 31, 50] },
+  { hour: 22, minutes: [11, 31, 51] },
+  { hour: 23, minutes: [11, 31, 50] },
+];
 
 async function seedLine() {
   await seedTripTemplates({
@@ -134,6 +257,32 @@ async function seedLine() {
     saturdaySchedule,
     sundaySchedule,
     season: "standard",
+  });
+}
+async function seedLineNym() {
+  await seedTripTemplates({
+    tramLineNumber: 8,
+    startStopName: "Frölunda Torg",
+    endStopName: "Nymånegatan",
+    heading: "Nymånegatan",
+    tripDurationMinutes: 40, // Adjust based on actual travel time
+    weekdaySchedule: weekdayScheduleNym,
+    saturdaySchedule: saturdayScheduleNym,
+    sundaySchedule: sundayScheduleNym,
+    season: "summer",
+  });
+}
+async function seedLineNymRev() {
+  await seedTripTemplates({
+    tramLineNumber: 8,
+    startStopName: "Nymånegatan",
+    endStopName: "Frölunda Torg",
+    heading: "Frölunda Torg",
+    tripDurationMinutes: 40, // Adjust based on actual travel time
+    weekdaySchedule: weekdayScheduleNymRev,
+    saturdaySchedule: saturdayScheduleNymRev,
+    sundaySchedule: sundayScheduleNymRev,
+    season: "summer",
   });
 }
 async function seedLineRev() {
@@ -160,4 +309,15 @@ async function main() {
     process.exit(1);
   }
 }
-main();
+async function mainSummer16() {
+  try {
+    await seedLineNym();
+    await seedLineNymRev();
+    console.log("Tram Line 8 summer 2016 trip templates seeded successfully.");
+    process.exit(0);
+  } catch (error) {
+    console.error("Error seeding line 8 summer 2016:", error);
+    process.exit(1);
+  }
+}
+mainSummer16();
