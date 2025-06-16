@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface Trip {
   _id: string;
@@ -14,6 +15,9 @@ interface Trip {
 }
 
 const CirculationBuilderForm = () => {
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
+
   const [trips, setTrips] = useState<Trip[]>([]);
   const [filteredTrips, setFilteredTrips] = useState<Trip[]>([]);
   const [selectedTrips, setSelectedTrips] = useState<Trip[]>([]);
@@ -28,6 +32,36 @@ const CirculationBuilderForm = () => {
   const [designation, setDesignation] = useState<number | "">("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Load circulation if in edit mode
+  useEffect(() => {
+    const fetchCirculation = async () => {
+      if (!editId) return;
+
+      try {
+        const res = await fetch(`/api/circulationTemplate/${editId}`);
+        const data = await res.json();
+
+        setDesignation(data.designation);
+        setFilters({
+          tramline: "",
+          heading: "",
+          dayType: data.dayType,
+          season: data.season,
+        });
+        setSelectedTrips(
+          data.trips.sort((a: Trip, b: Trip) =>
+            a.startTime.localeCompare(b.startTime)
+          )
+        );
+      } catch (error) {
+        console.error("Error loading circulation:", error);
+        setMessage("❌ Failed to load circulation.");
+      }
+    };
+
+    fetchCirculation();
+  }, [editId]);
 
   const applyFilters = async () => {
     const { tramline, heading, dayType, season } = filters;
@@ -79,25 +113,36 @@ const CirculationBuilderForm = () => {
       season: filters.season,
     };
 
-    const res = await fetch("/api/circulationTemplate/new", {
-      method: "POST",
+    const method = editId ? "PUT" : "POST";
+    const url = editId
+      ? `/api/circulationTemplate/${editId}`
+      : "/api/circulationTemplate/new";
+
+    const res = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
     if (res.ok) {
-      setMessage("✅ Circulation created.");
-      setSelectedTrips([]);
-      setDesignation("");
+      setMessage(
+        editId ? "✅ Circulation updated." : "✅ Circulation created."
+      );
+      if (!editId) {
+        setSelectedTrips([]);
+        setDesignation("");
+      }
     } else {
       const err = await res.json();
-      setMessage(err.message || "❌ Failed to create circulation.");
+      setMessage(err.message || "❌ Failed to submit circulation.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Create Circulation</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        {editId ? "Edit Circulation" : "Create Circulation"}
+      </h1>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">Designation</label>
@@ -206,7 +251,7 @@ const CirculationBuilderForm = () => {
         type="submit"
         className="bg-green-600 text-white py-2 px-6 rounded"
       >
-        Save Circulation
+        {editId ? "Update Circulation" : "Save Circulation"}
       </button>
 
       {message && <p className="mt-4 text-center text-blue-700">{message}</p>}

@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
   const driver = await Driver.findOne({ employeeId });
   if (!driver || driver.email !== session.user.email) {
-    console.log(driver, session.user.email);
+    console.log(driver.email, driver.employeeId, session.user.email);
     return new Response("Forbidden", { status: 403 });
   }
   if (!driver) {
