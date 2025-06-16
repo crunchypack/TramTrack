@@ -4,6 +4,7 @@ import mongoose, { Document, Schema } from "mongoose";
 interface IDriver extends Document {
   name: string;
   employeeId: string;
+  email: string;
 }
 
 const driverSchema: Schema<IDriver> = new Schema({
@@ -14,6 +15,12 @@ const driverSchema: Schema<IDriver> = new Schema({
   employeeId: {
     type: String,
     required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match: /.+\@.+\..+/,
   },
 });
 

@@ -1,6 +1,8 @@
 import { connectToDB } from "@/utils/database";
 import { Driver, PlannedWorkday } from "@/models";
 import { NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth/next";
 export async function GET(req: Request) {
   await connectToDB();
   const { searchParams } = new URL(req.url);
@@ -34,6 +36,13 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   await connectToDB();
   const { employeeId, date } = await req.json();
 
@@ -42,6 +51,10 @@ export async function POST(req: Request) {
   }
 
   const driver = await Driver.findOne({ employeeId });
+  if (!driver || driver.email !== session.user.email) {
+    console.log(driver, session.user.email);
+    return new Response("Forbidden", { status: 403 });
+  }
   if (!driver) {
     return NextResponse.json({ message: "Driver not found" }, { status: 404 });
   }
@@ -61,10 +74,20 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   await connectToDB();
   const { employeeId, date } = await req.json();
 
   const driver = await Driver.findOne({ employeeId });
+  if (!driver || driver.email !== session.user.email) {
+    return new Response("Forbidden", { status: 403 });
+  }
   if (!driver) {
     return NextResponse.json({ message: "Driver not found" }, { status: 404 });
   }

@@ -1,5 +1,4 @@
 "use client";
-
 import { format } from "date-fns";
 
 interface CalendarDayModalProps {
@@ -12,6 +11,7 @@ interface CalendarDayModalProps {
   onClose: () => void;
   onAddPlannedWorkday: (date: Date) => void;
   onRemovePlannedWorkday: (date: Date) => void;
+  isLoggedIn: boolean;
 }
 
 export const CalendarDayModal = ({
@@ -19,6 +19,7 @@ export const CalendarDayModal = ({
   onClose,
   onAddPlannedWorkday,
   onRemovePlannedWorkday,
+  isLoggedIn,
 }: CalendarDayModalProps) => {
   const handleTogglePlannedWorkday = () => {
     if (day.isPlanned) {
@@ -70,7 +71,7 @@ export const CalendarDayModal = ({
         )}
 
         <div className="flex justify-between mt-6">
-          {!day.isScheduled && (
+          {isLoggedIn && !day.isScheduled && (
             <button
               onClick={handleTogglePlannedWorkday}
               className={`px-4 py-2 rounded ${

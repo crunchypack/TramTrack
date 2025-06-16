@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import {
@@ -9,6 +10,9 @@ import {
   eachDayOfInterval,
   isSameDay,
   parseISO,
+  startOfWeek,
+  endOfWeek,
+  addDays,
 } from "date-fns";
 import { CalendarDayModal } from "@/components/CalendarDayModal";
 
@@ -27,6 +31,8 @@ const CalendarPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<DayStatus | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: session } = useSession();
+
   const fetchPlannedWorkdays = async () => {
     const response = await fetch(
       `/api/driver/planned?employeeId=${employeeId}`
@@ -45,8 +51,12 @@ const CalendarPage = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const monthStart = startOfMonth(currentMonth);
-        const monthEnd = endOfMonth(currentMonth);
+        const calendarStart = startOfWeek(startOfMonth(currentMonth), {
+          weekStartsOn: 1,
+        });
+        const calendarEnd = endOfWeek(endOfMonth(currentMonth), {
+          weekStartsOn: 1,
+        });
 
         const [schedules, plannedWorkdays] = await Promise.all([
           fetchSchedules(),
@@ -54,8 +64,8 @@ const CalendarPage = () => {
         ]);
 
         const monthDays = eachDayOfInterval({
-          start: monthStart,
-          end: monthEnd,
+          start: calendarStart,
+          end: calendarEnd,
         });
 
         const daysWithStatus = monthDays.map((day) => ({
@@ -88,7 +98,7 @@ const CalendarPage = () => {
       return "bg-green-100 border-green-300 hover:bg-green-200 cursor-pointer";
     if (day.isPlanned)
       return "bg-yellow-100 border-yellow-300 hover:bg-yellow-200 cursor-pointer";
-    return "bg-gray-100 border-gray-300 hover:bg-gray-200 cursor-pointer";
+    return "bg-blue-100 border-gray-300 hover:bg-green-200 cursor-pointer";
   };
 
   const getDayStatusText = (day: DayStatus) => {
@@ -103,26 +113,20 @@ const CalendarPage = () => {
   };
 
   const handleAddPlannedWorkday = async (date: Date) => {
+    if (!session)
+      return alert("You must be logged in to add a planned workday.");
     try {
       const response = await fetch("/api/driver/planned", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          employeeId,
-          date: date.toISOString(),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId, date: date.toISOString() }),
       });
 
       if (response.ok) {
-        setDays((prevDays) =>
-          prevDays.map((d) => {
-            if (isSameDay(d.date, date)) {
-              return { ...d, isPlanned: true };
-            }
-            return d;
-          })
+        setDays((prev) =>
+          prev.map((d) =>
+            isSameDay(d.date, date) ? { ...d, isPlanned: true } : d
+          )
         );
       }
     } catch (error) {
@@ -131,26 +135,19 @@ const CalendarPage = () => {
   };
 
   const handleRemovePlannedWorkday = async (date: Date) => {
+    if (!session) return alert("Please log in to remove planned days");
     try {
       const response = await fetch("/api/driver/planned", {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          employeeId,
-          date: date.toISOString(),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId, date: date.toISOString() }),
       });
 
       if (response.ok) {
-        setDays((prevDays) =>
-          prevDays.map((d) => {
-            if (isSameDay(d.date, date)) {
-              return { ...d, isPlanned: false };
-            }
-            return d;
-          })
+        setDays((prev) =>
+          prev.map((d) =>
+            isSameDay(d.date, date) ? { ...d, isPlanned: false } : d
+          )
         );
       }
     } catch (error) {
@@ -200,32 +197,39 @@ const CalendarPage = () => {
         </div>
       ) : (
         <>
+          {/* Weekday headers starting on Monday */}
           <div className="grid grid-cols-7 gap-2 mb-4">
-            {/* Weekday headers */}
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center font-semibold py-2">
-                {day}
-              </div>
-            ))}
+            {Array.from({ length: 7 }).map((_, i) => {
+              const day = startOfWeek(new Date(), { weekStartsOn: 1 });
+              return (
+                <div key={i} className="text-center font-semibold py-2">
+                  {format(addDays(day, i), "EEE")}
+                </div>
+              );
+            })}
           </div>
 
+          {/* Calendar days */}
           <div className="grid grid-cols-7 gap-2">
-            {/* Calendar days */}
             {days.map((day) => {
-              const dateStr = format(day.date, "d");
               const isCurrentMonth =
                 day.date.getMonth() === currentMonth.getMonth();
+              const isToday = isSameDay(day.date, new Date());
 
               return (
                 <div
                   key={day.date.toString()}
                   onClick={() => handleDayClick(day)}
-                  className={`p-2 border rounded min-h-24 ${getDayClassName(
+                  className={`p-2 border rounded min-h-24 relative ${getDayClassName(
                     day
-                  )} ${!isCurrentMonth ? "opacity-50" : ""}`}
+                  )} ${!isCurrentMonth ? "opacity-50" : ""} ${
+                    isToday ? "ring-2 ring-orange-400" : ""
+                  }`}
                 >
                   <div className="flex justify-between">
-                    <span className="font-semibold">{dateStr}</span>
+                    <span className="font-semibold">
+                      {format(day.date, "d")}
+                    </span>
                     <span className="text-xs">{getDayStatusText(day)}</span>
                   </div>
 
@@ -233,9 +237,9 @@ const CalendarPage = () => {
                     <ul className="text-xs mt-1 space-y-1">
                       {day.schedule.circulations
                         .slice(0, 2)
-                        .map((circulation: any, i: number) => (
+                        .map((circ: any, i: number) => (
                           <li key={i} className="truncate">
-                            {circulation.startTime}–{circulation.endTime}
+                            {circ.startTime}–{circ.endTime}
                           </li>
                         ))}
                       {day.schedule.circulations.length > 2 && (
@@ -258,6 +262,7 @@ const CalendarPage = () => {
           onClose={() => setIsModalOpen(false)}
           onAddPlannedWorkday={handleAddPlannedWorkday}
           onRemovePlannedWorkday={handleRemovePlannedWorkday}
+          isLoggedIn={!!session}
         />
       )}
     </div>
