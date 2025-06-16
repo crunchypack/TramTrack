@@ -1,9 +1,10 @@
 import { connectToDB } from "@/utils/database";
 import { TripTemplate, TramLine } from "@/models";
-export async function GET(req: Request) {
+import { NextRequest } from "next/server";
+export async function GET(req: NextRequest) {
   try {
     await connectToDB();
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = req.nextUrl;
 
     const tramline = searchParams.get("tramline");
     const heading = searchParams.get("heading");

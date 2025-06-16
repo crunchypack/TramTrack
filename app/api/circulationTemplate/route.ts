@@ -1,11 +1,12 @@
 import { connectToDB } from "@/utils/database";
 import { CirculationTemplate } from "@/models";
 import "@/models";
+import { NextRequest } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     await connectToDB();
-    const url = new URL(req.url || "");
+    const url = req.nextUrl;
 
     const heading = url.searchParams.get("heading");
     const dayType = url.searchParams.get("dayType");
