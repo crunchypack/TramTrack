@@ -222,18 +222,26 @@ const DriverLocationPage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-6">Driver Upcoming Schedules</h1>
-      <p className="text-gray-600 mb-4">
-        Current time: {now.toLocaleTimeString("sv-SE")}{" "}
+    <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4">
+        Driver Upcoming Schedules
+      </h1>
+      <p className="text-gray-600 text-sm sm:text-base mb-4">
+        Current time: {now.toLocaleTimeString("sv-SE")}
       </p>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <div className="space-y-6">
           {drivers.map((driver) => (
-            <div key={driver._id} className="border rounded p-5 shadow">
-              <h2 className="text-xl font-semibold mb-2">{driver.name}</h2>
+            <div
+              key={driver._id}
+              className="border rounded-md p-4 sm:p-5 shadow-sm space-y-2"
+            >
+              <h2 className="text-lg sm:text-xl font-semibold">
+                {driver.name}
+              </h2>
+
               {schedules[driver.employeeId]?.length ? (
                 schedules[driver.employeeId].map((schedule, i) => (
                   <div key={i} className="mb-4">
@@ -253,18 +261,21 @@ const DriverLocationPage = () => {
 
                         return (
                           <li key={j} className="mt-1">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                #{c.circulationTemplate.designation}🕒{" "}
+                            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 sm:gap-4">
+                              <div className="text-sm sm:text-base">
+                                #{c.circulationTemplate.designation} 🕒{" "}
                                 {c.startTime}–{c.endTime} — {c.startStop.name} →{" "}
                                 {c.endStop.name}
                               </div>
                               {exportOptions.length > 0 && (
-                                <GoogleCalendarExportDropdown
-                                  options={exportOptions}
-                                />
+                                <div className="self-start sm:self-auto">
+                                  <GoogleCalendarExportDropdown
+                                    options={exportOptions}
+                                  />
+                                </div>
                               )}
                             </div>
+
                             <br />
 
                             {filteredTrips.length > 0 ? (
@@ -289,9 +300,9 @@ const DriverLocationPage = () => {
                                 return (
                                   <div
                                     key={k}
-                                    className={`text-sm ml-2 ${
+                                    className={`text-sm sm:text-base ml-2 mt-1 ${
                                       isActive
-                                        ? "bg-yellow-100 font-semibold p-1 rounded"
+                                        ? "bg-yellow-100 font-semibold p-1 rounded-md"
                                         : ""
                                     }`}
                                   >
@@ -304,7 +315,7 @@ const DriverLocationPage = () => {
                                       </span>
                                     )}
                                     {isActive && (
-                                      <span className="text-xs text-green-600 ml-1">
+                                      <span className="block sm:inline text-xs text-green-600 ml-1">
                                         (current – est. stop:{" "}
                                         {getEstimatedCurrentStop(
                                           trip.startTime,

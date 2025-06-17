@@ -320,4 +320,32 @@ async function mainSummer16() {
     process.exit(1);
   }
 }
-mainSummer16();
+
+const line8vagn = [
+  { hour: 6, minutes: [6, 16] },
+  { hour: 7, minutes: [44] },
+  { hour: 14, minutes: [55] },
+];
+const line8vagnsSun = [{ hour: 8, minutes: [50] }];
+async function seedLine8Vagns() {
+  try {
+    await seedTripTemplates({
+      tramLineNumber: 8,
+      startStopName: "Vagnhallen Majorna",
+      endStopName: "Frölunda Torg",
+      heading: "Frölunda",
+      tripDurationMinutes: 16, // Adjust based on actual travel time
+      weekdaySchedule: line8vagn,
+      saturdaySchedule: [],
+      sundaySchedule: line8vagnsSun,
+      season: "summer",
+    });
+    console.log("Tram Line 8 Vagns trip templates seeded successfully.");
+    process.exit(0);
+  } catch (error) {
+    console.error("Error seeding line 8 Vagns:", error);
+    process.exit(1);
+  }
+}
+seedLine8Vagns();
+//mainSummer16();

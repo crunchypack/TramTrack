@@ -37,10 +37,15 @@ export async function seedTripTemplates({
   await connectToDB();
 
   try {
+    const firstStop = await TramStop.findOne({ name: startStopName });
+    if (!firstStop) {
+      throw new Error(`Start stop "${startStopName}" not found`);
+    }
     // 1. Get all required references
     const tramLine = await TramLine.findOne({
       number: tramLineNumber,
       direction: heading,
+      "route.0": firstStop._id,
     });
     if (!tramLine) throw new Error(`Tram Line ${tramLineNumber} not found`);
 
