@@ -6,7 +6,18 @@ export async function POST(req: Request) {
   await connectToDB();
   const data = await req.json();
 
-  const { tramline, startTime, endTime, heading, startStop, endStop } = data;
+  const {
+    tramline,
+    startTime,
+    endTime,
+    heading,
+    startStop,
+    endStop,
+    dayType,
+    isWeekend,
+    season,
+  } = data;
+  console.log(data);
 
   if (
     !tramline ||
@@ -14,7 +25,9 @@ export async function POST(req: Request) {
     !endTime ||
     !heading ||
     !startStop ||
-    !endStop
+    !endStop ||
+    !dayType ||
+    isWeekend === undefined
   ) {
     return NextResponse.json(
       { message: "Missing required fields" },
@@ -30,6 +43,9 @@ export async function POST(req: Request) {
       heading,
       startStop,
       endStop,
+      dayType,
+      isWeekend,
+      season,
     });
     await trip.save();
     return NextResponse.json(trip, { status: 201 });

@@ -22,7 +22,11 @@ interface DayStatus {
   isScheduled: boolean;
   schedule?: any;
 }
-
+/**
+ *
+ * @returns A calendar page that displays the work schedule for a specific employee.
+ * It allows users to view planned and scheduled workdays, navigate between months, and interact with individual days.
+ */
 const CalendarPage = () => {
   const { employeeId } = useParams<{ employeeId: string }>();
   const [days, setDays] = useState<DayStatus[]>([]);
@@ -33,6 +37,11 @@ const CalendarPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: session } = useSession();
 
+  /**
+   *
+   * @returns Fetches planned workdays for the employee from the API.
+   * @throws Will throw an error if the fetch fails.
+   */
   const fetchPlannedWorkdays = async () => {
     const response = await fetch(
       `/api/driver/planned?employeeId=${employeeId}`
@@ -40,7 +49,11 @@ const CalendarPage = () => {
     if (!response.ok) throw new Error("Failed to fetch planned workdays");
     return await response.json();
   };
-
+  /**
+   *
+   * @returns Fetches the work schedules for the employee from the API.
+   * @throws Will throw an error if the fetch fails.
+   */
   const fetchSchedules = async () => {
     const response = await fetch(`/api/driver/location/${employeeId}`);
     if (!response.ok) throw new Error("Failed to fetch schedules");
@@ -48,6 +61,9 @@ const CalendarPage = () => {
   };
 
   useEffect(() => {
+    /**
+     * Fetches the work schedules and planned workdays for the employee,
+     */
     const fetchData = async () => {
       try {
         setIsLoading(true);
@@ -92,7 +108,12 @@ const CalendarPage = () => {
 
     if (employeeId) fetchData();
   }, [employeeId, currentMonth]);
-
+  /**
+   *
+   * @param day - The day object containing date and status information.
+   * @returns class names based on the status of the day for styling.
+   * This function determines the CSS classes to apply to each day in the calendar based on whether it is scheduled, planned, or off.
+   */
   const getDayClassName = (day: DayStatus) => {
     if (day.isScheduled)
       return "bg-green-100 border-green-300 hover:bg-green-200 cursor-pointer";
@@ -112,6 +133,13 @@ const CalendarPage = () => {
     setIsModalOpen(true);
   };
 
+  /**
+   *
+   * @param date - The date to add as a planned workday.
+   * Adds a planned workday for the employee on the specified date.
+   * @returns alert if the user is not logged in, otherwise updates the calendar state.
+   * This function sends a POST request to the API to add a planned workday for the employee.
+   */
   const handleAddPlannedWorkday = async (date: Date) => {
     if (!session)
       return alert("You must be logged in to add a planned workday.");
@@ -134,6 +162,13 @@ const CalendarPage = () => {
     }
   };
 
+  /**
+   *
+   * @param date - The date to remove as a planned workday.
+   * Removes a planned workday for the employee on the specified date.
+   * @returns alert if the user is not logged in, otherwise updates the calendar state.
+   * This function sends a DELETE request to the API to remove a planned workday for the employee.
+   */
   const handleRemovePlannedWorkday = async (date: Date) => {
     if (!session) return alert("Please log in to remove planned days");
     try {
