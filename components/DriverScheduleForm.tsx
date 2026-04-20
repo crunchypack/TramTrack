@@ -95,6 +95,20 @@ const DriverScheduleForm: React.FC<DriverScheduleFormProps> = ({
   ) => {
     const updated = [...selectedCirculations];
     updated[index][field] = value;
+    if (field === "circulationTemplate") {
+    const template = circulations.find((circ) => circ._id === value);
+    if (template && template.trips.length > 0) {
+     const firstTrip = template.trips[0];
+      const lastTrip = template.trips[template.trips.length - 1];
+
+      // Automatically set the driver's start/end to match the tram's full trip
+      // We use ._id because your form stores the stop ID
+      updated[index].startTime = firstTrip.startTime;
+      updated[index].endTime = lastTrip.endTime;
+      updated[index].startStop = (firstTrip.startStop as any)._id;
+      updated[index].endStop = (lastTrip.endStop as any)._id;
+    }
+  }
     setSelectedCirculations(updated);
   };
 

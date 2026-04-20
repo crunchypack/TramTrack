@@ -7,6 +7,7 @@ interface TramStop {
 }
 
 export default function AddTramlinePage() {
+  //States
   const [tramStops, setTramStops] = useState<TramStop[]>([]);
   const [selectedStopId, setSelectedStopId] = useState("");
   const [route, setRoute] = useState<string[]>([]);
@@ -15,14 +16,14 @@ export default function AddTramlinePage() {
   const [direction, setdirection] = useState("");
   const [reversedirection, setReversedirection] = useState("");
   const [message, setMessage] = useState("");
-
+  // get tramstops
   useEffect(() => {
     fetch("/api/tramstop")
       .then((res) => res.json())
       .then((data) => setTramStops(data))
       .catch(() => setMessage("❌ Failed to load tram stops"));
   }, []);
-
+  // add tramstop to route
   const addStopToRoute = () => {
     if (!selectedStopId || route.includes(selectedStopId)) return;
     setRoute([...route, selectedStopId]);
@@ -30,13 +31,13 @@ export default function AddTramlinePage() {
       setTimeBetweenStops([...timeBetweenStops, 0]); // default 0
     }
   };
-
+  // update timebetween stop array
   const updateTime = (index: number, value: number) => {
     const updated = [...timeBetweenStops];
     updated[index] = value;
     setTimeBetweenStops(updated);
   };
-
+  // Submit form
   const handleSubmit = async () => {
     if (
       !number ||
@@ -60,7 +61,7 @@ export default function AddTramlinePage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify([data]), // send as array
     });
-
+    // Post reverse tramline
     if (res.ok && reversedirection) {
       // Send reverse version too
       const reversed = {
@@ -78,7 +79,7 @@ export default function AddTramlinePage() {
 
     setMessage(res.ok ? "✅ Tramline saved!" : "❌ Failed to save.");
   };
-
+  // UI tailwind css
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-xl font-bold mb-4">Add Tramline</h1>

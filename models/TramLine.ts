@@ -1,8 +1,11 @@
 import mongoose, { Document, Schema } from "mongoose";
-
+/**
+ * Schema for Tramlines
+ */
 interface ITramLine extends Document {
   number: number;
   direction: string;
+  vasttrafikGid:string,
   route: mongoose.Types.ObjectId[];
   timeBetweenStops: number[];
 }

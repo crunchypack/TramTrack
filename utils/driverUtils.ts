@@ -1,6 +1,11 @@
 import { format, parseISO, isAfter, isBefore, addMinutes } from "date-fns";
 
 // --- Interfaces ---
+interface LiveStatus {
+  delayMinutes: number;
+  estimatedTime: string;
+  isCancelled: boolean;
+}
 interface Trip {
   _id: string;
   startTime: string; // ISO string
@@ -38,6 +43,7 @@ interface currentStopInfo {
   tramlineNumber: number;
   scheduledEndTime: Date;
   heading: string;
+  liveStatus?: LiveStatus | null;
 }
 
 interface nextTripInfo {
@@ -54,7 +60,9 @@ export function getCurrentStopAndDetails(
   schedule: DriverSchedule,
   currentTime: Date
 ): currentStopInfo {
-  for (const trip of schedule.circulationTemplate.trips) {
+  const trips = schedule.circulationTemplate?.trips || [];
+
+  for (const trip of trips) {
     const tripStartTime = parseISO(trip.startTime);
     const tripEndTime = parseISO(trip.endTime);
 
@@ -67,33 +75,16 @@ export function getCurrentStopAndDetails(
       for (let i = 0; i < trip.tramline.route.length; i++) {
         cumulativeTime = addMinutes(
           cumulativeTime,
-          trip.tramline.timeBetweenStops[i]
+          trip.tramline.timeBetweenStops[i] || 0
         );
 
-        if (isAfter(currentTime, cumulativeTime)) {
-          if (currentTime.getTime() === cumulativeTime.getTime()) {
-            return {
-              currentStop: trip.tramline.route[i],
-              tramlineNumber: trip.tramline.number,
-              scheduledEndTime: tripEndTime,
-              heading: trip.heading,
-            };
-          }
-
-          return {
-            currentStop: trip.tramline.route[i - 1],
-            tramlineNumber: trip.tramline.number,
-            scheduledEndTime: tripEndTime,
-            heading: trip.heading,
-          };
-        }
-
-        if (currentTime.getTime() === cumulativeTime.getTime()) {
+        if (isAfter(currentTime, cumulativeTime) || currentTime.getTime() === cumulativeTime.getTime()) {
           return {
             currentStop: trip.tramline.route[i],
             tramlineNumber: trip.tramline.number,
             scheduledEndTime: tripEndTime,
             heading: trip.heading,
+            liveStatus: null, // Default to null, injected in the page component
           };
         }
       }
@@ -105,6 +96,7 @@ export function getCurrentStopAndDetails(
     tramlineNumber: 0,
     scheduledEndTime: new Date("0"),
     heading: "null",
+    liveStatus: null,
   };
 }
 

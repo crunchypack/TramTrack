@@ -33,6 +33,7 @@ export default function NewTripForm() {
   );
   const [season, setSeason] = useState<"standard" | "summer">("standard");
   const [isWeekend, setIsWeekend] = useState<boolean>(false);
+  const [message, setMessage] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function NewTripForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage("");
     const response = await fetch("/api/tripTemplate/new", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -73,7 +75,7 @@ export default function NewTripForm() {
     });
 
     if (response.ok) {
-      router.push("/new-trip");
+      setMessage("Trip added: " + startTime + "->" + endTime);
     } else {
       alert("Failed to create trip template");
     }
@@ -203,6 +205,7 @@ export default function NewTripForm() {
         >
           Create Trip
         </button>
+        {message && <p className="mt-4 text-center text-blue-700">{message}</p>}
       </form>
     </div>
   );

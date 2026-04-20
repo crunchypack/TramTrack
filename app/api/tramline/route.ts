@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   try {
     await connectToDB();
-    const tramlines = await TramLine.find({}).populate("route", "name");
+    const tramlines = await TramLine.find({}).populate("route", "name vasttrafikGid");
     return new Response(JSON.stringify(tramlines), { status: 200 });
   } catch (error) {
     console.log(error);

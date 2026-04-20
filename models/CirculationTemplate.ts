@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
-
+/**
+ * Circulation schema
+ */
 interface ICirculationTemplate extends Document {
   designation: number;
   trips: mongoose.Types.ObjectId[];

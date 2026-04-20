@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
-
+/**
+ * Schema for Planed workday, document to track drivers that are booked
+ */
 interface IPlannedWorkday extends Document {
   driver: mongoose.Types.ObjectId;
   date: Date;

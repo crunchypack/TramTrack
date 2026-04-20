@@ -1,4 +1,6 @@
-// models/index.ts
+/**
+ * Model export
+ */
 import Driver from "./Driver";
 import DriverSchedule from "./DriverSchedule";
 import CirculationTemplate from "./CirculationTemplate";

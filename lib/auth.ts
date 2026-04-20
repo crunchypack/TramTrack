@@ -1,7 +1,6 @@
-// lib/auth.ts
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
-
+// Auth providers
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({

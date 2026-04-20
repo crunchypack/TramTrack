@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
-
+/**
+ * Schema for Trips
+ */
 interface ITripTemplate extends Document {
   tramline: mongoose.Types.ObjectId;
   startTime: string;
