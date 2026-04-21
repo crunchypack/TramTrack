@@ -13,8 +13,17 @@ interface ITramLine {
   number: number;
   direction: string;
   route: ITramStop[];
+  searchRoute: ITramStop[];
 }
-
+interface SearchTrip {
+  startTime: string;
+  endTime: string;
+  heading: string;
+  originName: string;
+  originGid: string;
+  destinationName: string;
+  destinationGid: string;
+}
 const CirculationBuilderForm = () => {
   const [dbTramlines, setDbTramlines] = useState<ITramLine[]>([]);
   const [selectedLine, setSelectedLine] = useState<ITramLine | null>(null);
@@ -25,8 +34,8 @@ const CirculationBuilderForm = () => {
   const [designation, setDesignation] = useState("");
   const [dayType, setDayType] = useState("weekday");
 
-  const [filteredTrips, setFilteredTrips] = useState<any[]>([]);
-  const [selectedTrips, setSelectedTrips] = useState<any[]>([]);
+  const [filteredTrips, setFilteredTrips] = useState<SearchTrip[]>([]);
+  const [selectedTrips, setSelectedTrips] = useState<SearchTrip[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // 1. Load Lines from your new API
@@ -42,8 +51,10 @@ const CirculationBuilderForm = () => {
     setSelectedLine(line);
     if (line) {
       // Default to the full route, but user can change via dropdowns
-      setOriginGid(line.route[0]?.vasttrafikGid || "");
-      setDestGid(line.route[line.route.length - 1]?.vasttrafikGid || "");
+      setOriginGid(line.searchRoute[0]?.vasttrafikGid || "");
+      setDestGid(
+        line.searchRoute[line.searchRoute.length - 1]?.vasttrafikGid || "",
+      );
     }
   };
   const [selectedDate, setSelectedDate] = useState("2026-04-21");
@@ -73,6 +84,20 @@ const CirculationBuilderForm = () => {
   };
 
   const handleSave = async () => {
+    const invalidTrip = selectedTrips.find(
+      (t) => !t.originGid || !t.destinationGid,
+    );
+    if (!designation.trim()) {
+      alert("Designation is required.");
+      return;
+    }
+
+    if (invalidTrip) {
+      alert(
+        "One or more selected trips are missing origin or destination GID.",
+      );
+      return;
+    }
     const payload = {
       designation: Number(designation),
       dayType,
@@ -85,6 +110,7 @@ const CirculationBuilderForm = () => {
         originName: t.originName,
         originGid: t.originGid,
         destinationName: t.destinationName,
+        destinationGid: t.destinationGid,
       })),
     };
 
@@ -94,7 +120,15 @@ const CirculationBuilderForm = () => {
       body: JSON.stringify(payload),
     });
 
-    if (res.ok) alert("Template Saved!");
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("Failed to save template:", data);
+      alert(data.error || "Failed to save template");
+      return;
+    }
+
+    alert("Template Saved!");
   };
 
   return (
@@ -141,7 +175,7 @@ const CirculationBuilderForm = () => {
           className="p-4 border rounded-xl"
           disabled={!selectedLine}
         >
-          {selectedLine?.route.map((stop) => (
+          {selectedLine?.searchRoute.map((stop) => (
             <option key={stop._id} value={stop.vasttrafikGid}>
               {stop.name}
             </option>
@@ -155,7 +189,7 @@ const CirculationBuilderForm = () => {
           className="p-4 border rounded-xl"
           disabled={!selectedLine}
         >
-          {selectedLine?.route.map((stop) => (
+          {selectedLine?.searchRoute.map((stop) => (
             <option key={stop._id} value={stop.vasttrafikGid}>
               {stop.name}
             </option>
@@ -200,7 +234,19 @@ const CirculationBuilderForm = () => {
                 {trip.startTime} - {trip.endTime}
               </span>
               <button
-                onClick={() => setSelectedTrips([...selectedTrips, trip])}
+                onClick={() =>
+                  setSelectedTrips((prev) => {
+                    const exists = prev.some(
+                      (t) =>
+                        t.startTime === trip.startTime &&
+                        t.endTime === trip.endTime &&
+                        t.originGid === trip.originGid &&
+                        t.destinationGid === trip.destinationGid,
+                    );
+
+                    return exists ? prev : [...prev, trip];
+                  })
+                }
                 className="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-xs font-bold"
               >
                 ADD
