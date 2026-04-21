@@ -1,36 +1,25 @@
 import { connectToDB } from "@/utils/database";
 import { CirculationTemplate } from "@/models";
-import "@/models";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
     await connectToDB();
     const url = req.nextUrl;
 
-    const heading = url.searchParams.get("heading");
-    const dayType = url.searchParams.get("dayType");
-    const season = url.searchParams.get("season");
     const designation = url.searchParams.get("designation");
+    const dayType = url.searchParams.get("dayType");
 
     const filters: any = {};
-    if (heading) filters["trips.heading"] = heading;
     if (dayType) filters.dayType = dayType;
-    if (season) filters.season = season;
     if (designation) filters.designation = parseInt(designation);
 
-    const templates = await CirculationTemplate.find(filters).populate({
-      path: "trips",
-      populate: {
-        path: "tramline startStop endStop",
-      },
-    });
+    // No need for .populate() because trips are stored directly in the document
+    const templates = await CirculationTemplate.find(filters);
 
-    return new Response(JSON.stringify(templates), { status: 200 });
+    return NextResponse.json(templates, { status: 200 });
   } catch (err) {
-    console.error("Failed to fetch circulation templates:", err);
-    return new Response("Failed to fetch circulation templates", {
-      status: 500,
-    });
+    console.error("Failed to fetch templates:", err);
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
 }

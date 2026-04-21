@@ -1,17 +1,93 @@
 import { connectToDB } from "@/utils/database";
-import { DriverSchedule, CirculationTemplate, Driver } from "@/models";
+import { DriverSchedule, CirculationTemplate, Driver, TramLine } from "@/models";
 import { getVasttrafikToken } from "@/lib/vasttrafik";
 
-// --- Types for TypeScript Safety ---
-interface LiveStatus {
-  delayMinutes: number;
-  estimatedTime: string;
-  isCancelled: boolean;
-}
+type PopulatedStop = {
+  name: string;
+  vasttrafikGid?: string;
+};
+
+const normalizeStopName = (name?: string) =>
+  (name || "")
+    .trim()
+    .toLowerCase()
+    .replace(/,?\s*göteborg$/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const timeToMinutes = (time: string) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
+const getTripDurationMinutes = (startTime: string, endTime: string) => {
+  const start = timeToMinutes(startTime);
+  const end = timeToMinutes(endTime);
+
+  // Handles overnight trips if needed
+  if (end < start) {
+    return end + 24 * 60 - start;
+  }
+
+  return end - start;
+};
+
+const getRouteSlice = (
+  routeStops: PopulatedStop[],
+  originName: string,
+  destinationName: string,
+) => {
+  const originIndex = routeStops.findIndex(
+    (stop) => normalizeStopName(stop.name) === normalizeStopName(originName),
+  );
+
+  const destinationIndex = routeStops.findIndex(
+    (stop) => normalizeStopName(stop.name) === normalizeStopName(destinationName),
+  );
+
+  if (originIndex === -1 || destinationIndex === -1) {
+    return [];
+  }
+
+  if (originIndex > destinationIndex) {
+    return [];
+  }
+
+  return routeStops.slice(originIndex, destinationIndex + 1);
+};
+
+const buildRouteStopsWithTiming = (
+  slicedRoute: PopulatedStop[],
+  tripStartTime: string,
+  tripEndTime: string,
+) => {
+  if (slicedRoute.length === 0) return [];
+
+  if (slicedRoute.length === 1) {
+    return [
+      {
+        ...slicedRoute[0],
+        minutesFromStart: 0,
+      },
+    ];
+  }
+
+  const totalTripMinutes = Math.max(
+    1,
+    getTripDurationMinutes(tripStartTime, tripEndTime),
+  );
+
+  return slicedRoute.map((stop, index) => ({
+    ...stop,
+    minutesFromStart: Math.round(
+      (index / (slicedRoute.length - 1)) * totalTripMinutes,
+    ),
+  }));
+};
 
 export async function GET(
   req: Request,
-  { params }: { params: { employeeId: string } }
+  { params }: { params: { employeeId: string } },
 ) {
   const { searchParams } = new URL(req.url);
   const dateQuery = searchParams.get("date");
@@ -23,62 +99,104 @@ export async function GET(
   try {
     await connectToDB();
 
-    // 1. Find the Driver
     const driver = await Driver.findOne({ employeeId: params.employeeId });
     if (!driver) {
       return new Response("Driver not found", { status: 404 });
     }
 
-    // 2. Fetch the Schedule from MongoDB
     const schedule = await DriverSchedule.findOne({
       driver: driver._id,
       date: new Date(dateQuery),
-    })
-      .populate({
-        path: "circulations.circulationTemplate",
-        model: CirculationTemplate,
-        populate: { path: "trips", populate: "tramline" },
-      })
-      .populate("circulations.startStop")
-      .populate("circulations.endStop");
+    }).populate({
+      path: "circulations.circulationTemplate",
+      model: CirculationTemplate,
+    });
 
     if (!schedule) {
       return new Response("Schedule not found", { status: 404 });
     }
 
-    // 3. Get Västtrafik Token for live data enrichment
     const token = await getVasttrafikToken();
 
-    // 4. Enrich each circulation with Live Data
     const enrichedCirculations = await Promise.all(
       schedule.circulations.map(async (circ: any) => {
-        const gid = circ.startStop?.vasttrafikGid;
-        
-        // If there's no GID, we can't fetch live data, return static object
-        if (!gid) return circ.toObject();
+        const circObj = circ.toObject();
+        const template = circObj.circulationTemplate;
+
+        if (!template || !Array.isArray(template.trips) || template.trips.length === 0) {
+          return circObj;
+        }
+
+        // Step 1: Enrich all trips with route stop geometry from our DB
+        const enrichedTrips = await Promise.all(
+          template.trips.map(async (trip: any) => {
+            try {
+              const tramLine = await TramLine.findOne({
+                number: Number(trip.line),
+                direction: trip.heading,
+              }).populate("route");
+
+              if (!tramLine || !Array.isArray(tramLine.route)) {
+                return { ...trip, routeStops: [] };
+              }
+
+              const populatedRoute: PopulatedStop[] = tramLine.route.map((stop: any) => ({
+                name: stop.name,
+                vasttrafikGid: stop.vasttrafikGid || "",
+              }));
+
+              const slicedRoute = getRouteSlice(
+                populatedRoute,
+                trip.originName,
+                trip.destinationName,
+              );
+
+              const routeStops = buildRouteStopsWithTiming(
+                slicedRoute,
+                trip.startTime,
+                trip.endTime,
+              );
+
+              return { ...trip, routeStops };
+            } catch (error) {
+              console.error("Failed to enrich trip with routeStops:", error);
+              return { ...trip, routeStops: [] };
+            }
+          }),
+        );
+
+        // Step 2: Handle Live Status (Västtrafik API)
+        // We use the corrected 'originGid' and matching logic here
+        const firstTrip = enrichedTrips[0];
+        const gid = firstTrip?.originGid;
+
+        if (!gid) {
+          console.log(`⚠️ GID missing for designation ${template.designation}`);
+          return {
+            ...circObj,
+            circulationTemplate: { ...template, trips: enrichedTrips },
+          };
+        }
 
         try {
-          // Fetch live departures from Västtrafik
           const res = await fetch(
-            `https://ext-api.vasttrafik.se/pr/v4/stop-areas/${gid}/departures?limit=10`,
-            { headers: { Authorization: `Bearer ${token}` } }
+            `https://ext-api.vasttrafik.se/pr/v4/stop-areas/${gid}/departures?limit=50`,
+            { headers: { Authorization: `Bearer ${token}` } },
           );
-          
+
           if (!res.ok) throw new Error("VT API reached but failed");
           
           const liveData = await res.json();
+          const tripLineNumber = firstTrip.line?.toString();
 
-          // Try to match the tram line number (designation)
-          // We look into the populated circulationTemplate to find the tramline number
-          const lineNumber = circ.circulationTemplate?.trips[0]?.tramline?.number?.toString();
-
+          // Match by shortName (e.g. "6")
           const liveMatch = liveData.results?.find(
-            (d: any) => d.line.designation === lineNumber
+            (d: any) => d.line?.shortName === tripLineNumber,
           );
 
-          // Return the original circulation data + the liveStatus object
           return {
-            ...circ.toObject(),
+            ...circObj,
+            circulationTemplate: { ...template, trips: enrichedTrips },
             liveStatus: liveMatch
               ? {
                   delayMinutes: (liveMatch.delay || 0) / 60,
@@ -88,13 +206,15 @@ export async function GET(
               : null,
           };
         } catch (error) {
-          console.error(`Live data fetch failed for GID ${gid}:`, error);
-          return circ.toObject(); // Fallback to static data on API error
+          console.error(`Live fetch failed for GID ${gid}:`, error);
+          return {
+            ...circObj,
+            circulationTemplate: { ...template, trips: enrichedTrips },
+          };
         }
-      })
+      }),
     );
 
-    // 5. Final Assembly: Merge enriched circulations back into the schedule
     const finalResponse = {
       ...schedule.toObject(),
       circulations: enrichedCirculations,
@@ -104,9 +224,8 @@ export async function GET(
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-
   } catch (err) {
-    console.error("Failed to fetch driver schedule:", err);
+    console.error("Critical Route Error:", err);
     return new Response("Internal Server Error", { status: 500 });
   }
 }

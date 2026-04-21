@@ -1,6 +1,5 @@
 import { connectToDB } from "@/utils/database";
 import { CirculationTemplate } from "@/models";
-import { NextResponse } from "next/server";
 
 // GET /api/circulationTemplate/[id]
 export async function GET(
@@ -9,13 +8,9 @@ export async function GET(
 ) {
   try {
     await connectToDB();
+
     const template = await CirculationTemplate.findOne({
       designation: params.id,
-    }).populate({
-      path: "trips",
-      populate: {
-        path: "tramline startStop endStop",
-      },
     });
 
     if (!template) {

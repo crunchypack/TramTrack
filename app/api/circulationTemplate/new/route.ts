@@ -5,27 +5,20 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     await connectToDB();
-    const data = await req.json();
+    const { designation, dayType, trips, season } = await req.json();
 
-    const { designation, trips, dayType, season } = data;
-
-    if (!designation || !Array.isArray(trips) || !dayType) {
-      return new Response("Missing required fields", { status: 400 });
-    }
-
-    const newCirculation = new CirculationTemplate({
+    // With our new simplified model, we just save the whole object at once!
+    const newTemplate = new CirculationTemplate({
       designation,
-      trips,
       dayType,
-      season: season || "standard",
+      season,
+      trips // This is now just an array of trip objects
     });
 
-    await newCirculation.save();
-    return new Response(JSON.stringify(newCirculation), { status: 201 });
-  } catch (err) {
-    console.error("Failed to create circulation template:", err);
-    return new Response("Failed to create circulation template", {
-      status: 500,
-    });
+    await newTemplate.save();
+    return NextResponse.json(newTemplate, { status: 201 });
+  } catch (error: any) {
+    console.error("Save Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
