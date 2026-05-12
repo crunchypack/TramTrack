@@ -8,7 +8,7 @@ export async function GET() {
     await connectToDB();
     // We populate 'route' so the frontend gets the GIDs immediately
     const lines = await TramLine.find({})
-      .populate("route")
+      .populate("route.stop")
       .populate("searchRoute")
       .populate("reliefPoints");
     return NextResponse.json(lines);

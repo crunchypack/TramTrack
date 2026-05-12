@@ -1,32 +1,44 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+interface IRouteStop {
+  stop: mongoose.Types.ObjectId;
+  minutesFromStart: number;
+}
+
 interface ITramLine extends Document {
   number: number;
   direction: string;
-
-  // Keep this for backward compatibility.
-  // It now represents the actual in-service stop sequence.
-  route: mongoose.Types.ObjectId[];
-
-  // Used for Västtrafik trip discovery / import logic
+  route: IRouteStop[];
   searchRoute: mongoose.Types.ObjectId[];
-
-  // Stops where takeover / handover / depot-adjacent operations are relevant
   reliefPoints: mongoose.Types.ObjectId[];
 }
+
+const routeStopSchema = new Schema<IRouteStop>(
+  {
+    stop: {
+      type: Schema.Types.ObjectId,
+      ref: "TramStop",
+      required: true,
+    },
+    minutesFromStart: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+  { _id: false },
+);
 
 const tramLineSchema = new Schema<ITramLine>(
   {
     number: { type: Number, required: true },
     direction: { type: String, required: true },
 
-    route: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "TramStop",
-        required: true,
-      },
-    ],
+    route: {
+      type: [routeStopSchema],
+      required: true,
+      default: [],
+    },
 
     searchRoute: [
       {

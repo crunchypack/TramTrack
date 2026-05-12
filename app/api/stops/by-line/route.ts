@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
   // Find the specific line/direction and populate the stops in the route
   const line = await TramLine.findOne({ number, direction })
-    .populate("route")
+    .populate("route.stop")
     .lean();
 
   if (!line)
