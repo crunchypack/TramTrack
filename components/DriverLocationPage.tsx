@@ -479,7 +479,7 @@ const DriverLocationPage = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-500">No schedule found.</p>
+                <p className="text-sm text-gray-500">No schedule found...</p>
               )}
             </div>
           ))}
