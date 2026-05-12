@@ -2,10 +2,10 @@ import mongoose, { Schema, Document } from "mongoose";
 
 interface ICirculationAssignment {
   circulationTemplate: mongoose.Types.ObjectId;
-  startTime: string; // ISO time (e.g. "08:00")
-  endTime: string;
-  startStop: mongoose.Types.ObjectId;
-  endStop: mongoose.Types.ObjectId;
+  startTime: string; // e.g. "11:03"
+  endTime: string;   // e.g. "15:21"
+  startStop: string; // Changed to string for manual name entry
+  endStop: string;   // Changed to string for manual name entry
 }
 
 interface IDriverSchedule extends Document {
@@ -22,16 +22,16 @@ const circulationAssignmentSchema = new Schema<ICirculationAssignment>({
   },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
-  startStop: { type: Schema.Types.ObjectId, ref: "TramStop", required: true },
-  endStop: { type: Schema.Types.ObjectId, ref: "TramStop", required: true },
+  // Changed these to String to support the manual text inputs in your form
+  startStop: { type: String, required: true },
+  endStop: { type: String, required: true },
 });
 
 const driverScheduleSchema = new Schema<IDriverSchedule>({
   driver: { type: Schema.Types.ObjectId, ref: "Driver", required: true },
   date: { type: Date, required: true },
-  circulations: [circulationAssignmentSchema], // 👈 array of blocks
+  circulations: [circulationAssignmentSchema], 
 });
 
 export default mongoose.models.DriverSchedule ||
   mongoose.model<IDriverSchedule>("DriverSchedule", driverScheduleSchema);
-// This schema defines a driver schedule that includes multiple circulations for a specific date.
