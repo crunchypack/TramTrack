@@ -8,7 +8,7 @@
 
 # testing
 /coverage
-api/admin
+/app/api/admin
 # next.js
 /.next/
 /out/
