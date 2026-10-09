@@ -1,37 +1,45 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface ICirculationAssignment {
+export interface ICirculationAssignment {
   circulationTemplate: mongoose.Types.ObjectId;
-  startTime: string; // e.g. "11:03"
-  endTime: string;   // e.g. "15:21"
-  startStop: string; // Changed to string for manual name entry
-  endStop: string;   // Changed to string for manual name entry
+  startTime: string;
+  endTime: string;
+  startStop: string;
+  endStop: string;
 }
 
-interface IDriverSchedule extends Document {
+export interface IDriverSchedule extends Document {
   driver: mongoose.Types.ObjectId;
   date: Date;
   circulations: ICirculationAssignment[];
 }
 
-const circulationAssignmentSchema = new Schema<ICirculationAssignment>({
-  circulationTemplate: {
-    type: Schema.Types.ObjectId,
-    ref: "CirculationTemplate",
-    required: true,
+const circulationAssignmentSchema = new Schema<ICirculationAssignment>(
+  {
+    circulationTemplate: {
+      type: Schema.Types.ObjectId,
+      ref: "CirculationTemplate",
+      required: true,
+    },
+    startTime: { type: String, required: true, trim: true },
+    endTime: { type: String, required: true, trim: true },
+    startStop: { type: String, required: true, trim: true },
+    endStop: { type: String, required: true, trim: true },
   },
-  startTime: { type: String, required: true },
-  endTime: { type: String, required: true },
-  // Changed these to String to support the manual text inputs in your form
-  startStop: { type: String, required: true },
-  endStop: { type: String, required: true },
-});
+  { _id: true },
+);
 
-const driverScheduleSchema = new Schema<IDriverSchedule>({
-  driver: { type: Schema.Types.ObjectId, ref: "Driver", required: true },
-  date: { type: Date, required: true },
-  circulations: [circulationAssignmentSchema], 
-});
+const driverScheduleSchema = new Schema<IDriverSchedule>(
+  {
+    driver: { type: Schema.Types.ObjectId, ref: "Driver", required: true },
+    date: { type: Date, required: true },
+    circulations: [circulationAssignmentSchema],
+  },
+  { timestamps: true },
+);
+
+// Compound index for real-time polling lookups
+driverScheduleSchema.index({ driver: 1, date: 1 });
 
 export default mongoose.models.DriverSchedule ||
   mongoose.model<IDriverSchedule>("DriverSchedule", driverScheduleSchema);
