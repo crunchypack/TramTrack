@@ -114,7 +114,7 @@ const DriverScheduleForm = ({
     const payload = {
       employeeId,
       date,
-      segments: selectedCircs,
+      circulations: selectedCircs,
     };
 
     // Send the payload to the server
