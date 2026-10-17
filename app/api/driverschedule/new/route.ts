@@ -2,14 +2,14 @@ import { connectToDB } from "@/utils/database";
 import { DriverSchedule } from "@/models";
 import { NextResponse } from "next/server";
 
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { employeeId, date, circulations } = body;
 
-    if (!employeeId || !date || !circulations.length) {
-      return NextResponse.json({ error: "Missing required data" }, { status: 400 });
+    // Validate payload presence
+    if (!employeeId || !date || !Array.isArray(circulations) || circulations.length === 0) {
+      return NextResponse.json({ error: "Missing required data or empty circulations array" }, { status: 400 });
     }
 
     await connectToDB();
@@ -30,6 +30,7 @@ export async function POST(req: Request) {
       id: newSchedule._id 
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Failed to save schedule:", error);
+    return NextResponse.json({ error: error.message || "Failed to save schedule" }, { status: 500 });
   }
 }

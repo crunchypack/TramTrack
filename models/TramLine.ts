@@ -1,11 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IRouteStop {
+export interface IRouteStop {
   stop: mongoose.Types.ObjectId;
   minutesFromStart: number;
 }
 
-interface ITramLine extends Document {
+export interface ITramLine extends Document {
   number: number;
   direction: string;
   route: IRouteStop[];
@@ -32,7 +32,7 @@ const routeStopSchema = new Schema<IRouteStop>(
 const tramLineSchema = new Schema<ITramLine>(
   {
     number: { type: Number, required: true },
-    direction: { type: String, required: true },
+    direction: { type: String, required: true, trim: true },
 
     route: {
       type: [routeStopSchema],

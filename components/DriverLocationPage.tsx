@@ -22,6 +22,17 @@ interface RouteStop {
   vasttrafikGid?: string;
 }
 
+interface VasttrafikStop {
+  gid: string | null;
+  name: string;
+  index: number;
+  plannedArrivalTime: string | null;
+  plannedDepartureTime: string | null;
+  estimatedArrivalTime: string | null;
+  estimatedDepartureTime: string | null;
+  isCancelled: boolean;
+}
+
 interface ScheduleTrip {
   startTime: string;
   endTime: string;
@@ -30,6 +41,9 @@ interface ScheduleTrip {
   startStop: StopInfo;
   endStop: StopInfo;
   routeStops?: RouteStop[];
+  vasttrafikStops?: VasttrafikStop[];
+  serviceJourneyGid?: string | null;
+  detailsReference?: string;
 }
 
 interface AdjustedTrip extends ScheduleTrip {
@@ -88,62 +102,95 @@ const formatTime = (minutes: number) => {
   return `${hrs}:${mins}`;
 };
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, value));
-
-const getMinutesBetween = (start: Date, end: Date) =>
-  Math.floor((end.getTime() - start.getTime()) / 60000);
+const formatIsoTime = (iso?: string | null) => {
+  if (!iso) return "--:--";
+  const match = iso.match(/T(\d{2}:\d{2})/);
+  return match?.[1] || "--:--";
+};
 
 const getEstimatedCurrentPosition = (
-  date: string,
-  tripStartTime: string,
-  tripEndTime: string,
-  stops: RouteStop[],
+  vasttrafikStops: VasttrafikStop[],
   now: Date,
-  delayMinutes: number = 0,
 ): EstimatedPosition | null => {
-  if (!stops || stops.length === 0) return null;
+  if (!vasttrafikStops || vasttrafikStops.length === 0) {
+    return null;
+  }
 
-  const start = createDate(date, tripStartTime);
-  const end = createDate(date, tripEndTime);
-  const adjustedEnd = new Date(end.getTime() + delayMinutes * 60000);
+  const stops = vasttrafikStops
+    .filter((stop) => !stop.isCancelled)
+    .sort((a, b) => a.index - b.index);
 
-  if (now < start) {
+  if (stops.length === 0) {
+    return null;
+  }
+
+  const getArrival = (stop: VasttrafikStop) =>
+    stop.estimatedArrivalTime ??
+    stop.plannedArrivalTime ??
+    stop.estimatedDepartureTime ??
+    stop.plannedDepartureTime;
+
+  const getDeparture = (stop: VasttrafikStop) =>
+    stop.estimatedDepartureTime ??
+    stop.plannedDepartureTime ??
+    stop.estimatedArrivalTime ??
+    stop.plannedArrivalTime;
+
+  const firstStop = stops[0];
+  const lastStop = stops[stops.length - 1];
+
+  const firstDeparture = getDeparture(firstStop);
+  const lastArrival = getArrival(lastStop);
+
+  if (!firstDeparture || !lastArrival) {
+    return null;
+  }
+
+  const firstDepartureDate = new Date(firstDeparture);
+  const lastArrivalDate = new Date(lastArrival);
+
+  if (now < firstDepartureDate) {
     return {
       lastStop: null,
-      nextStop: stops[0]?.name ?? null,
-      status: `Waiting to depart from ${stops[0]?.name ?? "start stop"}`,
+      nextStop: firstStop.name,
+      status: `Waiting to depart from ${firstStop.name}`,
     };
   }
 
-  if (now >= adjustedEnd) {
-    const last = stops[stops.length - 1]?.name ?? null;
+  if (now >= lastArrivalDate) {
     return {
-      lastStop: last,
+      lastStop: lastStop.name,
       nextStop: null,
-      status: `Arrived at ${last ?? "destination"}`,
+      status: `Arrived at ${lastStop.name}`,
     };
   }
-
-  const scheduledDuration = Math.max(1, getMinutesBetween(start, end));
-  const adjustedDuration = Math.max(1, scheduledDuration + delayMinutes);
-  const elapsedMinutes = clamp(
-    getMinutesBetween(start, now),
-    0,
-    adjustedDuration,
-  );
-
-  const equivalentScheduledMinutes =
-    (elapsedMinutes / adjustedDuration) * scheduledDuration;
 
   for (let i = 0; i < stops.length - 1; i++) {
     const currentStop = stops[i];
     const nextStop = stops[i + 1];
 
+    const currentArrival = getArrival(currentStop);
+    const currentDeparture = getDeparture(currentStop);
+    const nextArrival = getArrival(nextStop);
+
+    if (!currentDeparture || !nextArrival) continue;
+
+    const currentDepartureDate = new Date(currentDeparture);
+    const nextArrivalDate = new Date(nextArrival);
+
     if (
-      equivalentScheduledMinutes >= currentStop.minutesFromStart &&
-      equivalentScheduledMinutes < nextStop.minutesFromStart
+      currentArrival &&
+      now >= new Date(currentArrival) &&
+      now < currentDepartureDate
     ) {
+      return {
+        lastStop: currentStop.name,
+        nextStop: nextStop.name,
+        status: `At ${currentStop.name}`,
+      };
+    }
+
+    if (now >= currentDepartureDate && now < nextArrivalDate) {
       return {
         lastStop: currentStop.name,
         nextStop: nextStop.name,
@@ -152,27 +199,36 @@ const getEstimatedCurrentPosition = (
     }
   }
 
-  return {
-    lastStop: stops[stops.length - 2]?.name ?? null,
-    nextStop: stops[stops.length - 1]?.name ?? null,
-    status: `Approaching ${stops[stops.length - 1]?.name ?? "destination"}`,
-  };
-};
+  let lastPassedStop: VasttrafikStop | null = null;
+  let nextUpcomingStop: VasttrafikStop | null = null;
 
-const getStopsForTrip = (trip: AdjustedTrip): RouteStop[] => {
-  if (trip.routeStops && trip.routeStops.length > 0) {
-    return trip.routeStops;
+  for (const stop of stops) {
+    const departure = getDeparture(stop);
+    const arrival = getArrival(stop);
+
+    if (departure && now >= new Date(departure)) {
+      lastPassedStop = stop;
+    }
+
+    if (arrival && now < new Date(arrival) && !nextUpcomingStop) {
+      nextUpcomingStop = stop;
+    }
   }
 
-  const totalMinutes = Math.max(
-    1,
-    timeToMinutes(trip.endTime) - timeToMinutes(trip.startTime),
-  );
+  if (lastPassedStop || nextUpcomingStop) {
+    return {
+      lastStop: lastPassedStop?.name ?? null,
+      nextStop: nextUpcomingStop?.name ?? null,
+      status:
+        lastPassedStop && nextUpcomingStop
+          ? `Between ${lastPassedStop.name} and ${nextUpcomingStop.name}`
+          : nextUpcomingStop
+            ? `Approaching ${nextUpcomingStop.name}`
+            : `Departed ${lastPassedStop?.name ?? ""}`,
+    };
+  }
 
-  return [
-    { name: trip.startStop.name, minutesFromStart: 0 },
-    { name: trip.endStop.name, minutesFromStart: totalMinutes },
-  ];
+  return null;
 };
 
 const getFilteredTrips = (circulation: ScheduleCirculation): AdjustedTrip[] => {
@@ -261,6 +317,7 @@ const DriverLocationPage = () => {
   const [schedules, setSchedules] = useState<Record<string, Schedule[]>>({});
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(new Date());
+  const [expandedTripIndex, setExpandedTripIndex] = useState<string | null>(null);
 
   const fetchSchedules = async (driverList: Driver[]) => {
     const today = new Date().toISOString().split("T")[0];
@@ -329,13 +386,13 @@ const DriverLocationPage = () => {
         <p className="text-gray-600 text-sm">
           Current time: {now.toLocaleTimeString("sv-SE")}
         </p>
-        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded font-semibold">
           Live Data Active
         </span>
       </div>
 
       {loading ? (
-        <p>Loading schedules...</p>
+        <p className="text-gray-500">Loading schedules...</p>
       ) : (
         <div className="space-y-6">
           {drivers.map((driver) => (
@@ -343,7 +400,7 @@ const DriverLocationPage = () => {
               key={driver._id}
               className="border rounded-lg p-4 shadow-sm bg-white"
             >
-              <h2 className="text-xl font-bold border-b pb-2 mb-4">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 text-gray-900">
                 {driver.name}
               </h2>
 
@@ -359,17 +416,17 @@ const DriverLocationPage = () => {
                           key={j}
                           className={`p-4 rounded-md border-l-4 ${
                             delay > 0
-                              ? "border-orange-500 bg-orange-50"
-                              : "border-blue-500 bg-blue-50"
+                              ? "border-orange-500 bg-orange-50/50"
+                              : "border-blue-500 bg-blue-50/40"
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div>
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-black text-lg">
+                                <span className="font-black text-lg text-gray-900">
                                   #{c.circulationTemplate.designation}
                                 </span>
-                                <span className="text-sm font-medium">
+                                <span className="text-sm font-medium text-gray-700">
                                   {c.startTime} – {c.endTime}
                                 </span>
 
@@ -404,7 +461,7 @@ const DriverLocationPage = () => {
                             />
                           </div>
 
-                          <div className="mt-4 space-y-2">
+                          <div className="mt-4 space-y-3">
                             {filteredTrips.map((trip, k) => {
                               const active = isCurrentTrip(
                                 schedule.date,
@@ -414,59 +471,159 @@ const DriverLocationPage = () => {
                                 delay,
                               );
 
+                              const vastStops = trip.vasttrafikStops ?? [];
                               const estimatedPosition = active
-                                ? getEstimatedCurrentPosition(
-                                    schedule.date,
-                                    trip.startTime,
-                                    trip.endTime,
-                                    getStopsForTrip(trip),
-                                    now,
-                                    delay,
-                                  )
+                                ? getEstimatedCurrentPosition(vastStops, now)
                                 : null;
+
+                              const tripKey = `${i}-${j}-${k}`;
+                              const isExpanded =
+                                expandedTripIndex === tripKey ||
+                                (active && expandedTripIndex === null);
 
                               return (
                                 <div
                                   key={k}
-                                  className={`text-sm p-2 rounded ${
+                                  className={`text-sm rounded-lg border transition-all ${
                                     active
-                                      ? "bg-white shadow-sm border-2 border-blue-200"
-                                      : "text-gray-500"
+                                      ? "bg-white shadow border-blue-300 ring-1 ring-blue-100"
+                                      : "bg-gray-50/60 border-gray-200"
                                   }`}
                                 >
-                                  <div className="flex justify-between gap-4">
-                                    <span>
-                                      {active ? "🟢" : "•"}{" "}
-                                      <strong>Line {trip.line}</strong> mot{" "}
-                                      {trip.heading}
-                                    </span>
-                                    <span className="font-mono">
-                                      {trip.startTime} - {trip.endTime} 
-                                    </span>
-                                    
-                                  </div>
-
-                                  {active && (
-                                    <div className="mt-1 text-xs text-blue-600 font-medium italic space-y-1">
-                                      <div>
-                                        {estimatedPosition?.status ||
-                                          "Currently in service"}
+                                  {/* Trip Header */}
+                                  <div className="p-3">
+                                    <div className="flex justify-between items-center gap-4">
+                                      <div className="flex items-center gap-2">
+                                        <span>{active ? "🟢" : "⚪"}</span>
+                                        <strong className="text-gray-900">
+                                          Line {trip.line}
+                                        </strong>
+                                        <span className="text-gray-500">
+                                          mot
+                                        </span>
+                                        <span className="font-semibold text-gray-800">
+                                          {trip.heading}
+                                        </span>
                                       </div>
 
-                                      {estimatedPosition?.nextStop && (
-                                        <div>
-                                          Approaching{" "}
-                                          <span className="font-semibold">
-                                            {estimatedPosition.nextStop}
+                                      <div className="flex items-center gap-3">
+                                        <span className="font-mono text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                                          {trip.startTime} – {trip.endTime}
+                                        </span>
+
+                                        {vastStops.length > 0 && (
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              setExpandedTripIndex(
+                                                isExpanded ? "" : tripKey,
+                                              )
+                                            }
+                                            className="text-xs text-blue-600 hover:text-blue-800 font-medium underline"
+                                          >
+                                            {isExpanded
+                                              ? "Hide stops"
+                                              : `Stops (${vastStops.length})`}
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Realtime Status Indicator */}
+                                    {active && (
+                                      <div className="mt-2 text-xs text-blue-700 font-medium bg-blue-50/80 p-2 rounded flex flex-wrap items-center justify-between gap-2 border border-blue-100">
+                                        <div className="flex items-center gap-2">
+                                          <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                          </span>
+                                          <span>
+                                            {estimatedPosition?.status ||
+                                              "Currently in service"}
                                           </span>
                                         </div>
-                                      )}
 
-                                      {delay > 0 && (
-                                        <div className="text-orange-600">
-                                          Running {delay} min late
-                                        </div>
-                                      )}
+                                        {delay > 0 && (
+                                          <span className="text-orange-700 font-bold">
+                                            Running {delay} min late
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Stop-by-Stop Schedule Timeline */}
+                                  {isExpanded && vastStops.length > 0 && (
+                                    <div className="border-t border-gray-100 px-4 py-3 bg-white/70">
+                                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+                                        Västtrafik Journey Stops
+                                      </h4>
+
+                                      <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                                        {vastStops.map((stop) => {
+                                          const isCurrentOrNext =
+                                            estimatedPosition?.nextStop ===
+                                              stop.name ||
+                                            estimatedPosition?.lastStop ===
+                                              stop.name;
+
+                                          const departureIso =
+                                            stop.estimatedDepartureTime ??
+                                            stop.plannedDepartureTime;
+                                          const arrivalIso =
+                                            stop.estimatedArrivalTime ??
+                                            stop.plannedArrivalTime;
+
+                                          const stopTime = formatIsoTime(
+                                            departureIso || arrivalIso,
+                                          );
+
+                                          const isPassed =
+                                            departureIso &&
+                                            now >= new Date(departureIso);
+
+                                          return (
+                                            <div
+                                              key={stop.index}
+                                              className={`flex items-center justify-between text-xs py-1 px-2 rounded ${
+                                                stop.isCancelled
+                                                  ? "bg-red-50 text-red-500 line-through"
+                                                  : isCurrentOrNext && active
+                                                    ? "bg-blue-100 text-blue-900 font-semibold border-l-2 border-blue-600"
+                                                    : isPassed && active
+                                                      ? "text-gray-400"
+                                                      : "text-gray-700"
+                                              }`}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <span className="text-[10px] text-gray-400 w-4">
+                                                  {stop.index + 1}
+                                                </span>
+                                                <span>{stop.name}</span>
+                                                {stop.isCancelled && (
+                                                  <span className="text-[10px] bg-red-100 text-red-700 px-1 rounded">
+                                                    Cancelled
+                                                  </span>
+                                                )}
+                                              </div>
+
+                                              <div className="font-mono text-[11px] flex items-center gap-2">
+                                                {stop.estimatedArrivalTime &&
+                                                  stop.plannedArrivalTime &&
+                                                  stop.estimatedArrivalTime !==
+                                                    stop.plannedArrivalTime && (
+                                                    <span className="line-through text-gray-400">
+                                                      {formatIsoTime(
+                                                        stop.plannedArrivalTime,
+                                                      )}
+                                                    </span>
+                                                  )}
+                                                <span>{stopTime}</span>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
                                     </div>
                                   )}
                                 </div>
