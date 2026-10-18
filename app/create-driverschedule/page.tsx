@@ -7,7 +7,7 @@ const CreateTripPage = () => {
     drivers: "/api/driver",
     circulations: "/api/circulationTemplate",
     tramstop: "/api/tramstop",
-    save: "/api/driverSchedule"
+    save: "/api/driverSchedule/new"
   };
 
   return (
